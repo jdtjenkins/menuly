@@ -75,6 +75,25 @@ async function main() {
       } finally {
         otherClient.close();
       }
+    } else if (scenario === "separate-ledger") {
+      writeMigration(directory, "0001_first", ["CREATE TABLE first (value TEXT)"]);
+      const schema = await loadMigrations(directory);
+      await applyMigrations(client, schema);
+      const seedDirectory = join(projectRoot, "seed");
+      mkdirSync(seedDirectory);
+      writeMigration(seedDirectory, "0001_seed", ["INSERT INTO first (value) VALUES ('sample')"]);
+      const seed = await loadMigrations(seedDirectory);
+      assert.deepEqual(await applyMigrations(client, seed, "development_seed_migrations"), ["0001_seed"]);
+      assert.deepEqual(await applyMigrations(client, seed, "development_seed_migrations"), []);
+      assert.deepEqual(await applyMigrations(client, schema), []);
+      const data = await client.execute("SELECT value FROM first");
+      assert.deepEqual(data.rows.map((row) => row.value), ["sample"]);
+      writeMigration(seedDirectory, "0001_seed", ["INSERT INTO first (value) VALUES ('changed')"]);
+      await assert.rejects(applyMigrations(client, await loadMigrations(seedDirectory), "development_seed_migrations"), /Migration history mismatch/);
+      const schemaLedger = await client.execute("SELECT id FROM schema_migrations");
+      const seedLedger = await client.execute("SELECT id FROM development_seed_migrations");
+      assert.deepEqual(schemaLedger.rows.map((row) => row.id), ["0001_first"]);
+      assert.deepEqual(seedLedger.rows.map((row) => row.id), ["0001_seed"]);
     } else if (scenario === "edited" || scenario === "missing") {
       writeMigration(directory, "0001_first", ["CREATE TABLE first (value TEXT)"]);
       await applyMigrations(client, await loadMigrations(directory));

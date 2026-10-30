@@ -19,7 +19,7 @@ test("visitors can move among all three areas", async ({ page }) => {
     await expect(page).toHaveURL(new RegExp(`${path}$`));
     await expect(page.getByRole("heading", { name: label, level: 1 })).toBeVisible();
     await expect(page.getByRole("navigation").getByRole("link", { name: label })).toHaveAttribute("aria-current", "page");
-    await expect(page.getByRole("heading", { level: 2 })).toContainText("coming soon");
+    await expect(page.getByRole("heading", { level: 2 })).toContainText(label === "Food" ? "Search foods" : "coming soon");
   }
 });
 

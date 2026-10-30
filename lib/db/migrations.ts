@@ -10,6 +10,8 @@ export type Migration = {
   statements: readonly string[];
 };
 
+export type MigrationLedger = "schema_migrations" | "development_seed_migrations";
+
 const migrationName = /^\d{4}_[a-z0-9-]+$/;
 
 export async function loadMigrations(directory: string): Promise<Migration[]> {
@@ -56,17 +58,18 @@ function checkMigrationSet(migrations: readonly Migration[]): void {
 export async function applyMigrations(
   client: Client,
   migrations: readonly Migration[],
+  ledger: MigrationLedger = "schema_migrations",
 ): Promise<string[]> {
   checkMigrationSet(migrations);
   const ordered = [...migrations].sort((a, b) => a.id.localeCompare(b.id));
 
-  await client.execute(`CREATE TABLE IF NOT EXISTS schema_migrations (
+  await client.execute(`CREATE TABLE IF NOT EXISTS ${ledger} (
     id TEXT PRIMARY KEY,
     hash TEXT NOT NULL,
     applied_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   )`);
 
-  const existing = await client.execute("SELECT id, hash FROM schema_migrations ORDER BY id");
+  const existing = await client.execute(`SELECT id, hash FROM ${ledger} ORDER BY id`);
   const byId = new Map(ordered.map((migration) => [migration.id, migration]));
   const applied = new Set<string>();
   for (const row of existing.rows) {
@@ -90,7 +93,7 @@ export async function applyMigrations(
     const transaction = await client.transaction("write");
     try {
       const current = await transaction.execute({
-        sql: "SELECT hash FROM schema_migrations WHERE id = ?",
+        sql: `SELECT hash FROM ${ledger} WHERE id = ?`,
         args: [migration.id],
       });
       if (current.rows.length > 0) {
@@ -102,7 +105,7 @@ export async function applyMigrations(
           await transaction.execute(statement);
         }
         await transaction.execute({
-          sql: "INSERT INTO schema_migrations (id, hash) VALUES (?, ?)",
+          sql: `INSERT INTO ${ledger} (id, hash) VALUES (?, ?)`,
           args: [migration.id, migration.hash],
         });
         completed.push(migration.id);

@@ -10,6 +10,7 @@
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
     "db:migrate": "tsx scripts/db-migrate.ts",
+    "db:seed:dev": "tsx scripts/db-seed-dev.ts",
     "db:smoke:remote": "tsx scripts/db-remote-smoke.ts"
   },
   "dependencies": {

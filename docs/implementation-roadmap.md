@@ -2,7 +2,7 @@
 
 This roadmap orders the planned OpenSpec changes for V1. The overall product requirements, user journeys, architecture, and scope are in the [V1 product vision](product-vision.md). Each change below should be specified, reviewed, implemented, and validated on its own after its dependencies are complete.
 
-Statuses are **Not Started**, **In Progress**, or **Complete**. The first two changes are complete, and the remaining changes have not started.
+Statuses are **Not Started**, **In Progress**, or **Complete**. `app-ui-and-test-foundation`, `libsql-data-foundation`, and `public-global-food-search` are complete; the remaining changes have not started.
 
 ## 1. `app-ui-and-test-foundation`
 
@@ -36,10 +36,11 @@ Statuses are **Not Started**, **In Progress**, or **Complete**. The first two ch
 
 ## 4. `public-global-food-search`
 
-- **Status:** Not Started
+- **Status:** Complete
 - **Dependencies:** 1 — `app-ui-and-test-foundation`; 2 — `libsql-data-foundation`
 - **Description:** Add global food storage, a small development seed, and anonymous catalog search.
 - **Acceptance criteria:**
+  - Generate a migration with 30 common foods to be used in local development.
   - Anonymous searches require a search term and return a capped result set.
   - Public results contain food names and calories only, with a sign-in prompt for full nutrition.
   - Ordinary visitors cannot change global foods.
