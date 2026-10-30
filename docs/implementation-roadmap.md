@@ -2,7 +2,7 @@
 
 This roadmap orders the planned OpenSpec changes for V1. The overall product requirements, user journeys, architecture, and scope are in the [V1 product vision](product-vision.md). Each change below should be specified, reviewed, implemented, and validated on its own after its dependencies are complete.
 
-Statuses are **Not Started**, **In Progress**, or **Complete**. The first change is complete; the remaining changes have not started.
+Statuses are **Not Started**, **In Progress**, or **Complete**. The first two changes are complete, and the remaining changes have not started.
 
 ## 1. `app-ui-and-test-foundation`
 
@@ -16,7 +16,7 @@ Statuses are **Not Started**, **In Progress**, or **Complete**. The first change
 
 ## 2. `libsql-data-foundation`
 
-- **Status:** Not Started
+- **Status:** Complete
 - **Dependencies:** None
 - **Description:** Establish server-side libSQL access and repeatable database migrations for local and remote environments.
 - **Acceptance criteria:**
