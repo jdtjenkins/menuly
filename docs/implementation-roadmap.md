@@ -2,11 +2,11 @@
 
 This roadmap orders the planned OpenSpec changes for V1. The overall product requirements, user journeys, architecture, and scope are in the [V1 product vision](product-vision.md). Each change below should be specified, reviewed, implemented, and validated on its own after its dependencies are complete.
 
-Statuses are **Not Started**, **In Progress**, or **Complete**. All changes are **Not Started** as of this roadmap: no OpenSpec changes have been created for them.
+Statuses are **Not Started**, **In Progress**, or **Complete**. The first change is complete; the remaining changes have not started.
 
 ## 1. `app-ui-and-test-foundation`
 
-- **Status:** Not Started
+- **Status:** Complete
 - **Dependencies:** None
 - **Description:** Establish the Food, Meals, and Meal Plan navigation with a friendly React, Tailwind CSS, and daisyUI shell, plus the initial Vitest and Playwright setup.
 - **Acceptance criteria:**

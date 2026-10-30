@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Menuly
 
-## Getting Started
+Menuly is a meal planning application. This first delivery provides the Food, Meals, and Meal Plan areas as accessible, informative starting points. Their full features are planned in [the implementation roadmap](docs/implementation-roadmap.md).
 
-First, run the development server:
+## Run locally
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
+Install dependencies with `pnpm install`, then start the development server:
+
+```sh
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open <http://localhost:3000>. The entry page takes you to Food.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Checks
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Run the unit and component tests:
 
-## Learn More
+```sh
+pnpm test:unit
+```
 
-To learn more about Next.js, take a look at the following resources:
+Playwright uses Chromium. Install its browser binary once on each machine:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```sh
+pnpm exec playwright install chromium
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Build the app before browser tests. The Playwright configuration starts and stops a local production server on port 3100 automatically:
 
-## Deploy on Vercel
+```sh
+pnpm build
+pnpm test:e2e
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Run the linter separately:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```sh
+pnpm lint
+```
+
+The test scripts are defined in `package.json`; the browser server and test directory are defined in `playwright.config.ts`.
