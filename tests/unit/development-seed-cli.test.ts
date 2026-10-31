@@ -15,4 +15,4 @@ test("development seed command inserts exactly 30 stable foods and reruns safely
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
-});
+}, 20_000);

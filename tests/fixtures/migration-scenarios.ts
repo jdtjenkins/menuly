@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdirSync, unlinkSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { createDatabaseClient } from "../../lib/db/client";
 import { parseDatabaseConfig } from "../../lib/db/config";
@@ -94,6 +94,25 @@ async function main() {
       const seedLedger = await client.execute("SELECT id FROM development_seed_migrations");
       assert.deepEqual(schemaLedger.rows.map((row) => row.id), ["0001_first"]);
       assert.deepEqual(seedLedger.rows.map((row) => row.id), ["0001_seed"]);
+    } else if (scenario === "line-endings") {
+      writeMigration(directory, "0001_first", ["CREATE TABLE first (value TEXT)"]);
+      const path = join(directory, "0001_first.ts");
+      const lfSource = readFileSync(path, "utf8");
+      const [migration] = await loadMigrations(directory);
+      assert.deepEqual(await applyMigrations(client, [migration]), ["0001_first"]);
+      writeFileSync(path, lfSource.replaceAll("\n", "\r\n"));
+      const [crlfMigration] = await loadMigrations(directory);
+      assert.equal(crlfMigration.hash, migration.hash);
+      assert.notEqual(crlfMigration.legacyLineEndingHash, migration.hash);
+      assert.deepEqual(await applyMigrations(client, [crlfMigration]), []);
+      await client.execute({
+        sql: "UPDATE schema_migrations SET hash = ? WHERE id = ?",
+        args: [crlfMigration.legacyLineEndingHash!, "0001_first"],
+      });
+      writeFileSync(path, lfSource);
+      assert.deepEqual(await applyMigrations(client, await loadMigrations(directory)), []);
+      writeMigration(directory, "0001_first", ["CREATE TABLE changed (value TEXT)"]);
+      await assert.rejects(applyMigrations(client, await loadMigrations(directory)), /Migration history mismatch/);
     } else if (scenario === "edited" || scenario === "missing") {
       writeMigration(directory, "0001_first", ["CREATE TABLE first (value TEXT)"]);
       await applyMigrations(client, await loadMigrations(directory));

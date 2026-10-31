@@ -2,7 +2,7 @@
 
 This roadmap orders the planned OpenSpec changes for V1. The overall product requirements, user journeys, architecture, and scope are in the [V1 product vision](product-vision.md). Each change below should be specified, reviewed, implemented, and validated on its own after its dependencies are complete.
 
-Statuses are **Not Started**, **In Progress**, or **Complete**. `app-ui-and-test-foundation`, `libsql-data-foundation`, and `public-global-food-search` are complete; the remaining changes have not started.
+Statuses are **Not Started**, **In Progress**, or **Complete**. `app-ui-and-test-foundation`, `libsql-data-foundation`, `public-global-food-search`, and `google-sign-in-and-catalog-access` are complete; the remaining changes have not started.
 
 ## 1. `app-ui-and-test-foundation`
 
@@ -47,7 +47,7 @@ Statuses are **Not Started**, **In Progress**, or **Complete**. `app-ui-and-test
 
 ## 5. `google-sign-in-and-catalog-access`
 
-- **Status:** Not Started
+- **Status:** Complete
 - **Dependencies:** 2 — `libsql-data-foundation`; 4 — `public-global-food-search`
 - **Description:** Add Google sign-in, application sessions, and signed-in access to full global-food nutrition.
 - **Acceptance criteria:**

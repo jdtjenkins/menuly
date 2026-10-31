@@ -7,6 +7,7 @@ import type { Client } from "@libsql/client";
 export type Migration = {
   id: string;
   hash: string;
+  legacyLineEndingHash?: string;
   statements: readonly string[];
 };
 
@@ -27,6 +28,7 @@ export async function loadMigrations(directory: string): Promise<Migration[]> {
 
     const path = join(directory, name);
     const source = await readFile(path);
+    const normalizedSource = source.toString("utf8").replaceAll("\r\n", "\n");
     const importedMigration: unknown = await import(pathToFileURL(path).href);
     const statements = (importedMigration as { statements?: unknown }).statements;
     if (!Array.isArray(statements) || statements.length === 0 ||
@@ -36,12 +38,17 @@ export async function loadMigrations(directory: string): Promise<Migration[]> {
 
     migrations.push({
       id,
-      hash: createHash("sha256").update(source).digest("hex"),
+      hash: createHash("sha256").update(normalizedSource).digest("hex"),
+      legacyLineEndingHash: createHash("sha256").update(normalizedSource.replaceAll("\n", "\r\n")).digest("hex"),
       statements,
     });
   }
 
   return migrations;
+}
+
+function matchesMigrationHash(migration: Migration, recordedHash: unknown): boolean {
+  return recordedHash === migration.hash || recordedHash === migration.legacyLineEndingHash;
 }
 
 function checkMigrationSet(migrations: readonly Migration[]): void {
@@ -75,7 +82,7 @@ export async function applyMigrations(
   for (const row of existing.rows) {
     const id = String(row.id);
     const migration = byId.get(id);
-    if (!migration || migration.hash !== row.hash) {
+    if (!migration || !matchesMigrationHash(migration, row.hash)) {
       throw new Error(`Migration history mismatch: ${id}`);
     }
     applied.add(id);
@@ -97,7 +104,7 @@ export async function applyMigrations(
         args: [migration.id],
       });
       if (current.rows.length > 0) {
-        if (current.rows[0].hash !== migration.hash) {
+        if (!matchesMigrationHash(migration, current.rows[0].hash)) {
           throw new Error(`Migration history mismatch: ${migration.id}`);
         }
       } else {

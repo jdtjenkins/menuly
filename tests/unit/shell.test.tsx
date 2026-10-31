@@ -31,8 +31,9 @@ describe("primary navigation", () => {
       const link = screen.getByRole("link", { name: area.label });
       expect(link.getAttribute("href")).toBe(area.href);
       expect(link.getAttribute("aria-current")).toBe(area.href === href ? "page" : null);
+      expect(link.className).toContain(area.href === href ? "font-bold" : "font-normal");
     }
-    expect(screen.getByRole("link", { name: label }).className).toContain("bg-primary");
+    expect(screen.getByRole("link", { name: label }).className).not.toContain("bg-primary");
   });
 });
 

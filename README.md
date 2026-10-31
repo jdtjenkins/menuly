@@ -1,6 +1,6 @@
 # Menuly
 
-Menuly is a meal planning application. The Food area supports public catalog search; Meals and Meal Plan remain informative starting points. Their full features are planned in [the implementation roadmap](docs/implementation-roadmap.md).
+Menuly is a meal planning application. The Food area supports public catalog search and Google sign-in for full reference nutrition; Meals and Meal Plan remain informative starting points. Their full features are planned in [the implementation roadmap](docs/implementation-roadmap.md).
 
 ## Run locally
 
@@ -16,7 +16,13 @@ Open <http://localhost:3000>. The entry page takes you to Food.
 
 The Food page accepts a name search through its GET form at `/food?q=apple`. Empty or whitespace-only terms show a search invitation instead of listing the catalog. Matching ignores letter case and returns at most 20 foods in a consistent name order. No-match searches show an empty result message.
 
-Anonymous results include names and calories only. Full nutrition is reserved for the later sign-in feature; the current page explains that without offering a nonfunctional sign-in action. Ordinary visitors have no global-food write endpoint. Apply the shared schema migration before serving the search page, then optionally seed a local development database as described below. A production database needs its separate planned catalog import; the development seed is not deployed there.
+Anonymous results include names and calories only. Signed-in users can browse without a term and search 20 foods per page, with reference amount, unit, stable ID, calories, protein, carbohydrates, and fat. Missing nutrition values display as unavailable. Ordinary visitors have no global-food write endpoint. Apply the shared schema migration before serving the search page, then optionally seed a local development database as described below. A production database needs its separate planned catalog import; the development seed is not deployed there.
+
+## Google sign-in
+
+Create a Google OAuth web client, set its authorized redirect URI to `http://localhost:3000/api/auth/callback/google` for local development, and add your site's exact callback URL in production. Set `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, and a long random stable `AUTH_SECRET` in untracked `.env.local` or deployment secrets. Set `AUTH_TRUST_HOST=true` when running locally on a host you control. Restart the app after changing them. Keep all credentials server-side; do not prefix them with `NEXT_PUBLIC_`.
+
+Use the Google-branded sign-in button on the right side of the navigation from any page; the Food prompt points to it. Google sign-in returns to Food. Once signed in, the same navigation position shows Sign out on Food, Meals, and Meal Plan. Sign out clears the current browser session and returns to Food, where anonymous search remains available. Sessions expire after seven days. The database stores only an internal account ID and Google's exact subject ID; it does not store profile fields or provider tokens. Protected catalog reads check that the account still exists. A copied session cookie can remain usable until expiry after browser sign-out, so treat the session secret as sensitive.
 
 ## Database connection
 
@@ -45,7 +51,7 @@ pnpm db:migrate
 
 The command reads the same `.env*` files as Next.js and uses the `DATABASE_URL` and optional `DATABASE_AUTH_TOKEN` settings above. With no URL set, it creates `data/menuly.db` and the migration ledger. The shared migration creates the global-food table but does not insert sample data.
 
-Future schema changes belong in numbered TypeScript files in `migrations/`, such as `0002_add-meals.ts`. Each file exports a nonempty `statements` array containing SQL strings in execution order. Keep each applied file unchanged: the runner records its SHA-256 hash and rejects edited or missing history. Add a new numbered file for the next change. A migration and its completion record commit together; a rerun skips completed files.
+Future schema changes belong in numbered TypeScript files in `migrations/`, such as `0002_add-meals.ts`. Each file exports a nonempty `statements` array containing SQL strings in execution order. Keep each applied file unchanged: the runner records its SHA-256 hash after normalizing CRLF to LF, accepts older hashes made with either line ending, and rejects substantive edits or missing history. Add a new numbered file for the next change. A migration and its completion record commit together; a rerun skips completed files.
 
 For a **local development database only**, set `MENULY_DEV_SEED=yes` in your untracked `.env.local` and run `pnpm db:seed:dev`. The command requires this exact opt-in, rejects remote database URLs and production mode, applies the shared schema first, then runs the separate development seed migration. It inserts 30 common foods with stable `dev-` IDs and illustrative nutrition values per 100 g or 100 ml. These samples are for development and tests, not authoritative nutrition data or the later production import. Rerunning the command does not duplicate or change the entries. Remove the opt-in from `.env.local` when it is no longer needed.
 
@@ -80,4 +86,4 @@ Run the linter separately:
 pnpm lint
 ```
 
-The test scripts are defined in `package.json`; the browser server and test directory are defined in `playwright.config.ts`.
+The browser suite starts a local OIDC fixture for sign-in and session checks, so it does not need production Google credentials. The test scripts are defined in `package.json`; the browser servers and test directory are defined in `playwright.config.ts`.

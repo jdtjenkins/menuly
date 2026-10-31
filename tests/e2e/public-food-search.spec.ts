@@ -8,7 +8,8 @@ test("visitor can search seeded food using the keyboard", async ({ page }) => {
   await expect(page).toHaveURL(/\/food\?q=aPpLe$/);
   await expect(page.getByRole("list", { name: "Food search results" }).getByText("Apple")).toBeVisible();
   await expect(page.getByText("52 kcal")).toBeVisible();
-  await expect(page.getByText(/Sign in for full nutrition once accounts are available/)).toBeVisible();
+  await expect(page.getByText(/Use Sign in with Google in the navigation/)).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "Sign in with Google" })).toBeVisible();
 });
 
 test("anonymous results are capped and reveal no full nutrition or database settings", async ({ page }) => {

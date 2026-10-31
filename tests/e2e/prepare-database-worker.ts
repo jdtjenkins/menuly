@@ -4,7 +4,7 @@ import { parseDatabaseConfig } from "../../lib/db/config";
 import { applyMigrations, loadMigrations } from "../../lib/db/migrations";
 
 async function prepareDatabase() {
-  const config = parseDatabaseConfig({ DATABASE_URL: "file:./data/menuly-playwright.db" });
+  const config = parseDatabaseConfig({ DATABASE_URL: "file:./data/menuly-google-auth-playwright.db" });
   const client = createDatabaseClient(config);
   try {
     await applyMigrations(client, await loadMigrations(join(process.cwd(), "migrations")));

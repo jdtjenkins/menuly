@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -9,12 +10,12 @@ const areas = [
   { label: "Meal Plan", href: "/meal-plan" },
 ] as const;
 
-export function PrimaryNavigation() {
+export function PrimaryNavigation({ authControl }: { authControl?: ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <nav aria-label="Primary navigation" className="w-full sm:w-auto">
-      <ul className="grid grid-cols-3 gap-1 rounded-2xl bg-base-200 p-1 sm:flex sm:gap-2">
+    <nav aria-label="Primary navigation" className="flex w-full flex-col gap-3 sm:flex-row sm:items-center lg:w-auto">
+      <ul className="flex flex-wrap items-center justify-between gap-x-5 gap-y-1 sm:justify-start">
         {areas.map(({ label, href }) => {
           const current = pathname === href;
 
@@ -23,11 +24,7 @@ export function PrimaryNavigation() {
               <Link
                 href={href}
                 aria-current={current ? "page" : undefined}
-                className={`flex min-h-11 items-center justify-center rounded-xl px-2 text-center text-sm font-semibold leading-tight transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:px-5 sm:text-base ${
-                  current
-                    ? "bg-primary text-primary-content shadow-sm"
-                    : "hover:bg-base-100"
-                }`}
+                className={`inline-flex min-h-11 items-center px-0.5 text-sm leading-tight text-base-content transition-colors hover:text-primary focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:text-base ${current ? "font-bold" : "font-normal"}`}
               >
                 {label}
               </Link>
@@ -35,6 +32,7 @@ export function PrimaryNavigation() {
           );
         })}
       </ul>
+      <div className="self-end sm:ml-auto">{authControl}</div>
     </nav>
   );
 }
