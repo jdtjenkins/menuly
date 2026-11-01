@@ -22,6 +22,7 @@ test("personal foods can be created and edited, then disappear after sign-out", 
   await page.locator('input[name="referenceAmount"]').fill("100");
   await page.locator('input[name="calories"]').fill("0");
   await page.locator('input[name="carbohydrates"]').fill("0");
+  await page.locator('select[name="unit"]').selectOption("g");
   await expect(page.locator('select[name="unit"]')).toHaveValue("g");
   await page.getByRole("button", { name: "Create food" }).click();
   await expect(page).toHaveURL(/\/food#personal-foods$/);

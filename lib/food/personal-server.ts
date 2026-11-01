@@ -2,7 +2,8 @@ import "server-only";
 
 import { requireAccount } from "../auth/current-account";
 import { getDatabaseClient } from "../db/server";
-import { archivePersonalFood, createPersonalFood, getPersonalFood, listPersonalFoods, updatePersonalFood } from "./personal-repository";
+import { createPersonalFood, getPersonalFood, listPersonalFoods, updatePersonalFood } from "./personal-repository";
+import { archiveWithMealAcknowledgement, getArchiveImpact, type AffectedMeal } from "../meals/archive-impact";
 import { validatePersonalFood, type PersonalFoodInput } from "./personal-validation";
 
 export async function listCurrentPersonalFoods(page = 1) {
@@ -35,7 +36,12 @@ export async function updateCurrentPersonalFood(id: string, input: PersonalFoodI
   return { ok: true as const, food };
 }
 
-export async function archiveCurrentPersonalFood(id: string) {
+export async function getCurrentArchiveImpact(id: string) {
   const account = await requireAccount();
-  return archivePersonalFood(getDatabaseClient(), account.id, id);
+  return getArchiveImpact(getDatabaseClient(), account.id, id);
+}
+
+export async function archiveCurrentPersonalFoodWithAcknowledgement(id: string, meals: AffectedMeal[]) {
+  const account = await requireAccount();
+  return archiveWithMealAcknowledgement(getDatabaseClient(), account.id, id, meals);
 }

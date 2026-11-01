@@ -8,6 +8,7 @@ async function prepareDatabase() {
   const client = createDatabaseClient(config);
   try {
     await applyMigrations(client, await loadMigrations(join(process.cwd(), "migrations")));
+    await client.execute("DELETE FROM app_users");
     await client.execute("INSERT OR IGNORE INTO app_users (id) VALUES ('playwright-other-account')");
     await applyMigrations(client, await loadMigrations(join(process.cwd(), "migrations", "development")), "development_seed_migrations");
     for (let i = 1; i <= 25; i++) {

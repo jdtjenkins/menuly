@@ -2,7 +2,7 @@
 
 This roadmap orders the planned OpenSpec changes for V1. The overall product requirements, user journeys, architecture, and scope are in the [V1 product vision](product-vision.md). Each change below should be specified, reviewed, implemented, and validated on its own after its dependencies are complete.
 
-Statuses are **Not Started**, **In Progress**, or **Complete**. `app-ui-and-test-foundation`, `libsql-data-foundation`, `public-global-food-search`, `google-sign-in-and-catalog-access`, `personal-foods`, and `clone-global-food` are complete; the remaining changes have not started.
+Statuses are **Not Started**, **In Progress**, or **Complete**. `app-ui-and-test-foundation`, `libsql-data-foundation`, `public-global-food-search`, `google-sign-in-and-catalog-access`, `personal-foods`, `clone-global-food`, `ingredient-meals-and-nutrition`, and `archive-personal-food` are complete; the remaining changes have not started.
 
 ## 1. `app-ui-and-test-foundation`
 
@@ -78,9 +78,9 @@ Statuses are **Not Started**, **In Progress**, or **Complete**. `app-ui-and-test
 
 ## 8. `ingredient-meals-and-nutrition`
 
-- **Status:** Not Started
+- **Status:** Complete
 - **Dependencies:** 4 — `public-global-food-search`; 5 — `google-sign-in-and-catalog-access`; 6 — `personal-foods`
-- **Description:** Let users create and edit private ingredient-only meals and see nutrition calculated from current food values.
+- **Description:** Let users create and edit private ingredient-only meals and see nutrition calculated from current food values. Include the meal-aware archive warning and retained references from the later archive item.
 - **Acceptance criteria:**
   - A meal has a name, a positive serving yield, and food ingredients with positive amounts in each food's fixed unit.
   - Ingredient nutrition scales from each food's reference amount; whole-meal and selected fractional-serving totals calculate correctly.
@@ -90,7 +90,7 @@ Statuses are **Not Started**, **In Progress**, or **Complete**. `app-ui-and-test
 
 ## 9. `archive-personal-food`
 
-- **Status:** Not Started
+- **Status:** Complete (delivered in `ingredient-meals-and-nutrition`)
 - **Dependencies:** 6 — `personal-foods`; 8 — `ingredient-meals-and-nutrition`
 - **Description:** Let users archive private foods without breaking existing meals.
 - **Acceptance criteria:**

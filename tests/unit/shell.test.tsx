@@ -2,7 +2,6 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import { usePathname } from "next/navigation";
 import { PrimaryNavigation } from "../../app/primary-navigation";
-import MealsPage from "../../app/meals/page";
 import MealPlanPage from "../../app/meal-plan/page";
 
 vi.mock("next/navigation", () => ({ usePathname: vi.fn() }));
@@ -37,9 +36,8 @@ describe("primary navigation", () => {
   });
 });
 
-describe("unfinished areas", () => {
+describe("unfinished area", () => {
   test.each([
-    { label: "Meals", Page: MealsPage, empty: "Meal building is coming soon" },
     { label: "Meal Plan", Page: MealPlanPage, empty: "Weekly planning is coming soon" },
   ])("shows an honest $label empty state", ({ label, Page, empty }) => {
     render(<Page />);

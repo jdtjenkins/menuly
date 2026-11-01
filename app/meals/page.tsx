@@ -1,12 +1,19 @@
-import { AreaEmptyState } from "../area-empty-state";
+import { Suspense } from "react";
+import { connection } from "next/server";
+import Link from "next/link";
+import { getCurrentAccount } from "../../lib/auth/current-account";
+import { listCurrentMeals } from "../../lib/meals/server";
+import { MealList } from "./meal-list";
 
-export default function MealsPage() {
-  return (
-    <AreaEmptyState
-      title="Meals"
-      intro="Keep your favourite ingredient-only meals together."
-      emptyTitle="Meal building is coming soon"
-      emptyDescription="There are no meals to create or browse yet. This area will hold saved meals and their nutrition details."
-    />
-  );
+export default function MealsPage() { return <Suspense fallback={<p>Loading meals…</p>}><MealsContent /></Suspense>; }
+
+async function MealsContent() {
+  await connection();
+  const account = await getCurrentAccount();
+  if (!account) return <section className="space-y-4"><h1 className="text-4xl font-bold">Meals</h1><p>Sign in with Google in the navigation to make private meals.</p></section>;
+  const meals = await listCurrentMeals();
+  return <div className="space-y-6">
+    <div className="flex flex-wrap items-center justify-between gap-4"><div><h1 className="text-4xl font-bold">Meals</h1><p className="mt-2 text-base-content/75">Ingredient-only recipes, private to you.</p></div><Link href="/meals/new" className="btn btn-primary">Create meal</Link></div>
+    {meals.length ? <MealList meals={meals} /> : <p className="rounded-xl border border-base-300 bg-base-100 p-6">No meals yet. Create one to get started.</p>}
+  </div>;
 }

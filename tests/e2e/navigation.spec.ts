@@ -22,7 +22,9 @@ test("visitors can move among all three areas", async ({ page }) => {
     for (const area of ["Food", "Meals", "Meal Plan"]) {
       await expect(page.getByRole("navigation").getByRole("link", { name: area })).toHaveCSS("font-weight", area === label ? "700" : "400");
     }
-    await expect(page.getByRole("heading", { level: 2 })).toContainText(label === "Food" ? "Search foods" : "coming soon");
+    if (label === "Food") await expect(page.getByRole("heading", { level: 2 })).toContainText("Search foods");
+    if (label === "Meals") await expect(page.getByText("Sign in with Google in the navigation to make private meals.")).toBeVisible();
+    if (label === "Meal Plan") await expect(page.getByRole("heading", { level: 2 })).toContainText("coming soon");
   }
 });
 
