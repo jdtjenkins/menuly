@@ -1,6 +1,6 @@
 # Menuly
 
-Menuly is a meal planning application. The Food area supports public catalog search and Google sign-in for full reference nutrition; Meals and Meal Plan remain informative starting points. Their full features are planned in [the implementation roadmap](docs/implementation-roadmap.md).
+Menuly is a meal planning application. The Food area supports public catalog search, Google sign-in for full reference nutrition, and owner-only personal foods; Meals and Meal Plan remain informative starting points. Their full features are planned in [the implementation roadmap](docs/implementation-roadmap.md).
 
 ## Run locally
 
@@ -16,7 +16,13 @@ Open <http://localhost:3000>. The entry page takes you to Food.
 
 The Food page accepts a name search through its GET form at `/food?q=apple`. Empty or whitespace-only terms show a search invitation instead of listing the catalog. Matching ignores letter case and returns at most 20 foods in a consistent name order. No-match searches show an empty result message.
 
-Anonymous results include names and calories only. Signed-in users can browse without a term and search 20 foods per page, with reference amount, unit, stable ID, calories, protein, carbohydrates, and fat. Missing nutrition values display as unavailable. Ordinary visitors have no global-food write endpoint. Apply the shared schema migration before serving the search page, then optionally seed a local development database as described below. A production database needs its separate planned catalog import; the development seed is not deployed there.
+Anonymous results include names and calories only. Signed-in users see My foods first and can choose **See global foods** to browse without a term or search 20 global foods per page, with reference amount, unit, calories, protein, carbohydrates, and fat. Use **My foods** to return. Internal food IDs are not shown on cards. Missing nutrition values display as unavailable. Ordinary visitors have no global-food write endpoint. Apply the shared schema migration before serving the search page, then optionally seed a local development database as described below. A production database needs its separate planned catalog import; the development seed is not deployed there.
+
+## Personal foods
+
+Run `pnpm db:migrate` before using personal foods so the owner-scoped table exists. Sign in, open Food, and use **Create personal food** in **My foods**. Enter a name, choose grams (`g`) or millilitres (`ml`), a positive reference amount, and calories. Protein, carbohydrates, and fat are optional; leave them blank when unknown. Enter `0` only for a measured zero. All nutrition values describe the chosen reference amount.
+
+Your foods appear in **My foods**, where **Edit** changes the name, reference amount, and nutrition values. The unit and food identity stay fixed after creation. **Archive food** asks for confirmation, then removes the food from your active list while retaining its record and stable ID. Archived foods cannot be edited through the active flow. Only your signed-in account can view, edit, or archive these foods. Signing out hides them; anonymous global-food search remains available. Global foods stay separate and cannot be changed through personal-food forms.
 
 ## Google sign-in
 

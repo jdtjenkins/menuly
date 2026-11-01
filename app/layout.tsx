@@ -29,11 +29,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <span aria-hidden="true" className="text-primary">✳</span>
               Menuly
             </Link>
-            <PrimaryNavigation authControl={
-              <Suspense fallback={null}>
-                <NavigationAuth />
-              </Suspense>
-            } />
+            <Suspense fallback={null}>
+              <PrimaryNavigation authControl={
+                <Suspense fallback={null}>
+                  <NavigationAuth />
+                </Suspense>
+              } />
+            </Suspense>
           </div>
         </header>
         <main id="main-content" className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14">

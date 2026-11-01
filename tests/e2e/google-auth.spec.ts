@@ -36,11 +36,24 @@ test("Google callback establishes a minimal account session and sign-out restore
     expect(Math.abs(buttonBox!.x + buttonBox!.width - signInBox!.x - signInBox!.width)).toBeLessThanOrEqual(2);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   }
+  await expect(page.getByRole("list", { name: "Full food catalog" })).toHaveCount(0);
+  await page.getByRole("link", { name: "See global foods" }).focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/view=global/);
   await expect(page.getByRole("list", { name: "Full food catalog" }).getByRole("listitem")).toHaveCount(20);
+  await expect(page.getByRole("list", { name: "Full food catalog" })).not.toContainText("ID:");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await expect(page.getByRole("link", { name: "Next" })).toBeVisible();
   await page.getByRole("link", { name: "Next" }).click();
+  await expect(page).toHaveURL(/view=global/);
   await expect(page.getByText("Page 2")).toBeVisible();
+  await page.getByRole("searchbox", { name: "Food name" }).fill("Apple");
+  await page.getByRole("button", { name: "Search" }).click();
+  await expect(page).toHaveURL(/view=global/);
+  await expect(page.getByRole("list", { name: "Full food catalog" })).toContainText("Apple");
+  await page.getByRole("link", { name: "My foods" }).click();
+  await expect(page.getByRole("heading", { name: "My foods" })).toBeVisible();
+  await expect(page.getByRole("list", { name: "Full food catalog" })).toHaveCount(0);
   const session = await page.request.get("/api/auth/session");
   const sessionText = await session.text();
   expect(sessionText).toContain("user");

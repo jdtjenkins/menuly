@@ -10,7 +10,7 @@ async function main() {
   const client = createDatabaseClient(parseDatabaseConfig({}, projectRoot));
   try {
     const migrations = await loadMigrations(join(process.cwd(), "migrations"));
-    assert.deepEqual(await applyMigrations(client, migrations), ["0001_global-foods", "0002_accounts"]);
+    assert.deepEqual(await applyMigrations(client, migrations), ["0001_global-foods", "0002_accounts", "0003_personal-foods", "0004_personal-food-archive"]);
     const emptyCatalog = await client.execute("SELECT COUNT(*) AS total FROM global_foods");
     assert.equal(emptyCatalog.rows[0].total, 0, "The shared schema migration must not insert development foods");
     const insert = `INSERT INTO global_foods
