@@ -2,7 +2,7 @@
 
 This roadmap orders the planned OpenSpec changes for V1. The overall product requirements, user journeys, architecture, and scope are in the [V1 product vision](product-vision.md). Each change below should be specified, reviewed, implemented, and validated on its own after its dependencies are complete.
 
-Statuses are **Not Started**, **In Progress**, or **Complete**. `app-ui-and-test-foundation`, `libsql-data-foundation`, `public-global-food-search`, and `google-sign-in-and-catalog-access` are complete; the remaining changes have not started.
+Statuses are **Not Started**, **In Progress**, or **Complete**. `app-ui-and-test-foundation`, `libsql-data-foundation`, `public-global-food-search`, `google-sign-in-and-catalog-access`, and `personal-foods` are complete; the remaining changes have not started.
 
 ## 1. `app-ui-and-test-foundation`
 
@@ -57,13 +57,14 @@ Statuses are **Not Started**, **In Progress**, or **Complete**. `app-ui-and-test
 
 ## 6. `personal-foods`
 
-- **Status:** Not Started
+- **Status:** Complete
 - **Dependencies:** 4 — `public-global-food-search`; 5 — `google-sign-in-and-catalog-access`
-- **Description:** Let signed-in users create and edit private foods.
+- **Description:** Let signed-in users create, edit, and archive private foods. My foods is their default Food view, with a switch to the global catalog.
 - **Acceptance criteria:**
   - A private food requires a name, fixed g or ml unit, positive reference amount, and calories; protein, carbohydrates, and fat are optional.
   - Users can view and edit only their own private foods.
   - Nutrition values describe the food's reference amount and remain distinct from a measured zero when missing.
+  - Archiving removes a private food from active views while preserving its record and stable ID. Meal-aware archive warnings remain in change 9.
 
 ## 7. `clone-global-food`
 
