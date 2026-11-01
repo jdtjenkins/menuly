@@ -7,10 +7,12 @@ import type { PersonalFoodFormState } from "./actions";
 
 const blank: PersonalFoodInput = { name: "", unit: "", referenceAmount: "", calories: "", protein: "", carbohydrates: "", fat: "" };
 
-export function PersonalFoodForm({ action, initial, edit = false }: {
+export function PersonalFoodForm({ action, initial, edit = false, cancelHref = "/food#personal-foods", submitLabel }: {
   action: (state: PersonalFoodFormState, formData: FormData) => Promise<PersonalFoodFormState>;
   initial?: PersonalFoodInput;
   edit?: boolean;
+  cancelHref?: string;
+  submitLabel?: string;
 }) {
   const [state, formAction, pending] = useActionState(action, { input: initial ?? blank, errors: {} });
   const [unit, setUnit] = useState(initial?.unit ?? "");
@@ -46,8 +48,8 @@ export function PersonalFoodForm({ action, initial, edit = false }: {
     </div>
     <p className="text-sm text-base-content/70">Nutrition values describe the reference amount. Leave optional values blank when unknown.</p>
     <div className="flex flex-wrap gap-3">
-      <button type="submit" disabled={pending} className="btn btn-primary">{pending ? "Saving…" : edit ? "Save changes" : "Create food"}</button>
-      <Link href="/food#personal-foods" className="btn btn-outline">Cancel</Link>
+      <button type="submit" disabled={pending} className="btn btn-primary">{pending ? "Saving…" : submitLabel ?? (edit ? "Save changes" : "Create food")}</button>
+      <Link href={cancelHref} className="btn btn-outline">Cancel</Link>
     </div>
   </form>;
 }

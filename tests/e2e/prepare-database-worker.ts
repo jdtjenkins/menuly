@@ -19,6 +19,12 @@ async function prepareDatabase() {
         args: [`e2e-${suffix}`, `Test food ${suffix}`],
       });
     }
+    await client.execute({
+      sql: `INSERT OR IGNORE INTO global_foods
+        (id, name, unit, reference_amount, calories, protein, carbohydrates, fat)
+        VALUES (?, ?, 'ml', 100, NULL, NULL, 0, 0)`,
+      args: ["e2e-missing-calories", "Test food missing calories"],
+    });
   } finally {
     client.close();
   }

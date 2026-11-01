@@ -6,7 +6,9 @@ import { applyMigrations, loadMigrations } from "../../lib/db/migrations";
 import { accountExists, findOrCreateGoogleAccount } from "../../lib/auth/accounts";
 import { resolveAccount } from "../../lib/auth/resolve-account";
 import { createAuthCallbacks } from "../../lib/auth/callbacks";
-import { readFullFoods, readGuardedFullFoods, normalizeFoodPage } from "../../lib/food/full-catalog";
+import { globalFoodToPersonalInput, readGlobalFoodById, readFullFoods, readGuardedFullFoods, normalizeFoodPage } from "../../lib/food/full-catalog";
+import { validatePersonalFood } from "../../lib/food/personal-validation";
+import { createPersonalFood, getPersonalFood, updatePersonalFood } from "../../lib/food/personal-repository";
 
 async function main() {
   const root = process.argv[2];
@@ -58,6 +60,49 @@ async function main() {
     assert.equal(normalizeFoodPage("999999"), 10_000);
     assert.equal(normalizeFoodPage("-1"), 1);
     assert.equal(normalizeFoodPage("2.5"), 1);
+    const zero = await readGlobalFoodById(client, "food-0");
+    assert.ok(zero);
+    assert.deepEqual(globalFoodToPersonalInput(zero), {
+      name: "Food 00", unit: "g", referenceAmount: "100", calories: "0",
+      protein: "", carbohydrates: "", fat: "0",
+    });
+    const complete = await readGlobalFoodById(client, "food-1");
+    assert.ok(complete);
+    assert.equal(globalFoodToPersonalInput(complete).protein, "1");
+    await client.execute({ sql: "INSERT INTO personal_foods (id, user_id, name, unit, reference_amount, calories) VALUES (?, ?, 'Private', 'g', 100, 1)", args: ["personal-only", first] });
+    assert.equal(await readGlobalFoodById(client, "personal-only"), null);
+    assert.equal(await readGlobalFoodById(client, "missing"), null);
+    assert.equal(await readGlobalFoodById(client, "food-1' OR 1=1 --"), null);
+    await client.execute({
+      sql: "INSERT INTO global_foods (id, name, unit, reference_amount, calories, protein, carbohydrates, fat) VALUES (?, ?, 'ml', ?, NULL, NULL, 0, 0)",
+      args: ["oversized", "N".repeat(101), 1_000_000_000_001],
+    });
+    const oversized = await readGlobalFoodById(client, "oversized");
+    assert.ok(oversized);
+    const draft = globalFoodToPersonalInput(oversized);
+    assert.equal(draft.calories, "");
+    assert.equal(draft.carbohydrates, "0");
+    assert.equal(draft.protein, "");
+    assert.deepEqual(validatePersonalFood(draft), { ok: false, errors: {
+      name: "Enter a name up to 100 characters.",
+      referenceAmount: "Enter a positive amount.",
+      calories: "Enter a number of zero or more.",
+    } });
+    const copiedValues = validatePersonalFood(globalFoodToPersonalInput(zero));
+    assert.equal(copiedValues.ok, true);
+    if (!copiedValues.ok) throw new Error("Expected valid clone values");
+    const mine = await createPersonalFood(client, first, copiedValues.values);
+    const secondMine = await createPersonalFood(client, first, copiedValues.values);
+    const theirs = await createPersonalFood(client, second, copiedValues.values);
+    assert.notEqual(mine.id, zero.id);
+    assert.notEqual(mine.id, secondMine.id);
+    assert.notEqual(mine.id, theirs.id);
+    assert.equal(await getPersonalFood(client, second, mine.id), null);
+    assert.equal((await getPersonalFood(client, first, mine.id))?.protein, null);
+    await updatePersonalFood(client, first, mine.id, { ...copiedValues.values, name: "Changed copy", calories: 90 });
+    assert.equal((await getPersonalFood(client, first, secondMine.id))?.name, zero.name);
+    assert.equal((await readGlobalFoodById(client, zero.id))?.name, zero.name);
+    assert.equal((await readGlobalFoodById(client, zero.id))?.calories, 0);
   } finally {
     client.close();
   }

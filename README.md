@@ -24,6 +24,8 @@ Run `pnpm db:migrate` before using personal foods so the owner-scoped table exis
 
 Your foods appear in **My foods**, where **Edit** changes the name, reference amount, and nutrition values. The unit and food identity stay fixed after creation. **Archive food** asks for confirmation, then removes the food from your active list while retaining its record and stable ID. Archived foods cannot be edited through the active flow. Only your signed-in account can view, edit, or archive these foods. Signing out hides them; anonymous global-food search remains available. Global foods stay separate and cannot be changed through personal-food forms.
 
+To start from a shared entry, choose **See global foods** and **Copy to My foods** on a global food. Review the prefilled personal-food form and select **Create copy** to save it; cancelling saves nothing. Unknown optional nutrients remain blank, and a global food without calories needs a calorie value before the copy can be saved. Each copy has a new private ID and can be edited or archived independently. Changes to a copy do not change the global food or other copies, and existing meal ingredients are never replaced automatically.
+
 ## Google sign-in
 
 Create a Google OAuth web client, set its authorized redirect URI to `http://localhost:3000/api/auth/callback/google` for local development, and add your site's exact callback URL in production. Set `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, and a long random stable `AUTH_SECRET` in untracked `.env.local` or deployment secrets. Set `AUTH_TRUST_HOST=true` when running locally on a host you control. Restart the app after changing them. Keep all credentials server-side; do not prefix them with `NEXT_PUBLIC_`.

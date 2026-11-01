@@ -67,6 +67,7 @@ async function FoodSearch({ searchParams }: FoodPageProps) {
             {full.foods.map((food) => <li key={food.id} className="rounded-xl border border-base-300 p-4">
               <h3 className="font-semibold">{food.name}</h3>
               <p className="text-sm text-base-content/75">Per {food.referenceAmount} {food.unit}</p>
+              <Link href={`/food/personal/new?clone=${encodeURIComponent(food.id)}`} className="btn btn-outline btn-sm mt-3" aria-label={`Copy ${food.name} to My foods`}>Copy to My foods</Link>
               <dl className="mt-3 grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
                 <div><dt>Calories</dt><dd>{nutrition(food.calories, "kcal")}</dd></div>
                 <div><dt>Protein</dt><dd>{nutrition(food.protein, "g")}</dd></div>

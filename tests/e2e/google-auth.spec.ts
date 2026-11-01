@@ -51,7 +51,7 @@ test("Google callback establishes a minimal account session and sign-out restore
   await page.getByRole("button", { name: "Search" }).click();
   await expect(page).toHaveURL(/view=global/);
   await expect(page.getByRole("list", { name: "Full food catalog" })).toContainText("Apple");
-  await page.getByRole("link", { name: "My foods" }).click();
+  await page.getByRole("link", { name: "My foods", exact: true }).click();
   await expect(page.getByRole("heading", { name: "My foods" })).toBeVisible();
   await expect(page.getByRole("list", { name: "Full food catalog" })).toHaveCount(0);
   const session = await page.request.get("/api/auth/session");

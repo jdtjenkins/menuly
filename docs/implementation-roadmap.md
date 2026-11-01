@@ -2,7 +2,7 @@
 
 This roadmap orders the planned OpenSpec changes for V1. The overall product requirements, user journeys, architecture, and scope are in the [V1 product vision](product-vision.md). Each change below should be specified, reviewed, implemented, and validated on its own after its dependencies are complete.
 
-Statuses are **Not Started**, **In Progress**, or **Complete**. `app-ui-and-test-foundation`, `libsql-data-foundation`, `public-global-food-search`, `google-sign-in-and-catalog-access`, and `personal-foods` are complete; the remaining changes have not started.
+Statuses are **Not Started**, **In Progress**, or **Complete**. `app-ui-and-test-foundation`, `libsql-data-foundation`, `public-global-food-search`, `google-sign-in-and-catalog-access`, `personal-foods`, and `clone-global-food` are complete; the remaining changes have not started.
 
 ## 1. `app-ui-and-test-foundation`
 
@@ -68,9 +68,9 @@ Statuses are **Not Started**, **In Progress**, or **Complete**. `app-ui-and-test
 
 ## 7. `clone-global-food`
 
-- **Status:** Not Started
+- **Status:** Complete
 - **Dependencies:** 4 — `public-global-food-search`; 6 — `personal-foods`
-- **Description:** Allow a user to copy a global food into their private catalog and edit the copy.
+- **Description:** Let signed-in users review a global food in a prefilled personal-food form, save an independent private copy, and edit it later. Missing calories must be supplied before saving.
 - **Acceptance criteria:**
   - A clone has its own food ID and owner.
   - Editing the clone leaves the global entry unchanged.
