@@ -2,7 +2,6 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import { usePathname } from "next/navigation";
 import { PrimaryNavigation } from "../../app/primary-navigation";
-import MealPlanPage from "../../app/meal-plan/page";
 
 vi.mock("next/navigation", () => ({ usePathname: vi.fn() }));
 
@@ -33,17 +32,5 @@ describe("primary navigation", () => {
       expect(link.className).toContain(area.href === href ? "font-bold" : "font-normal");
     }
     expect(screen.getByRole("link", { name: label }).className).not.toContain("bg-primary");
-  });
-});
-
-describe("unfinished area", () => {
-  test.each([
-    { label: "Meal Plan", Page: MealPlanPage, empty: "Weekly planning is coming soon" },
-  ])("shows an honest $label empty state", ({ label, Page, empty }) => {
-    render(<Page />);
-
-    expect(screen.getByRole("heading", { level: 1, name: label })).toBeTruthy();
-    expect(screen.getByRole("heading", { level: 2, name: empty })).toBeTruthy();
-    expect(screen.queryByRole("button")).toBeNull();
   });
 });

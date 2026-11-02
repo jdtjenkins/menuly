@@ -24,7 +24,7 @@ test("visitors can move among all three areas", async ({ page }) => {
     }
     if (label === "Food") await expect(page.getByRole("heading", { level: 2 })).toContainText("Search foods");
     if (label === "Meals") await expect(page.getByText("Sign in with Google in the navigation to make private meals.")).toBeVisible();
-    if (label === "Meal Plan") await expect(page.getByRole("heading", { level: 2 })).toContainText("coming soon");
+    if (label === "Meal Plan") await expect(page.getByText("Sign in with Google in the navigation to plan your private meals.")).toBeVisible();
   }
 });
 

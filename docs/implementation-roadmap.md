@@ -2,7 +2,7 @@
 
 This roadmap orders the planned OpenSpec changes for V1. The overall product requirements, user journeys, architecture, and scope are in the [V1 product vision](product-vision.md). Each change below should be specified, reviewed, implemented, and validated on its own after its dependencies are complete.
 
-Statuses are **Not Started**, **In Progress**, or **Complete**. `app-ui-and-test-foundation`, `libsql-data-foundation`, `public-global-food-search`, `google-sign-in-and-catalog-access`, `personal-foods`, `clone-global-food`, `ingredient-meals-and-nutrition`, and `archive-personal-food` are complete; the remaining changes have not started.
+Statuses are **Not Started**, **In Progress**, or **Complete**. `app-ui-and-test-foundation`, `libsql-data-foundation`, `public-global-food-search`, `google-sign-in-and-catalog-access`, `personal-foods`, `clone-global-food`, `ingredient-meals-and-nutrition`, `archive-personal-food`, and `weekly-meal-plan` are complete; the remaining changes have not started.
 
 ## 1. `app-ui-and-test-foundation`
 
@@ -100,7 +100,7 @@ Statuses are **Not Started**, **In Progress**, or **Complete**. `app-ui-and-test
 
 ## 10. `weekly-meal-plan`
 
-- **Status:** Not Started
+- **Status:** Complete
 - **Dependencies:** 5 — `google-sign-in-and-catalog-access`; 8 — `ingredient-meals-and-nutrition`
 - **Description:** Add one saved, non-dated Monday-to-Sunday plan per user, initially managed through autocomplete and simple card controls.
 - **Acceptance criteria:**
