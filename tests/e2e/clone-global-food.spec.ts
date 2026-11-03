@@ -9,6 +9,7 @@ test("signed-in user reviews a global food and saves an independent personal cop
   await page.goto("/food/personal/new?clone=e2e-01");
   await expect(page).toHaveURL(/\/food$/);
   await expect(page.getByRole("heading", { name: "Copy global food" })).toHaveCount(0);
+  await page.getByRole("button", { name: "Open navigation menu" }).click();
   await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "Sign in with Google" }).click();
   await page.getByRole("link", { name: "Continue as Test User" }).click();
   await page.goto("/food?view=global&q=Test%20food%2001");
@@ -40,8 +41,10 @@ test("signed-in user reviews a global food and saves an independent personal cop
   await expect(source).not.toContainText("123 kcal");
   await expect(page.getByRole("link", { name: "Copy Test food 01 to My foods" })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.getByRole("button", { name: "Open navigation menu" }).click();
   await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "Sign out" }).click();
   await expect(page).toHaveURL(/\/food$/);
+  await page.getByRole("button", { name: "Open navigation menu" }).click();
   await expect(page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "Sign in with Google" })).toBeVisible();
   await page.goto("/food?q=Test%20food%2001");
   await expect(page.getByRole("link", { name: /Copy .* to My foods/ })).toHaveCount(0);

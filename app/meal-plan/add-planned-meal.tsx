@@ -60,8 +60,8 @@ export function AddPlannedMeal({ weekday, day }: { weekday: Weekday; day: string
     });
   }
 
-  return <div role="group" aria-label={`Add meal to ${day}`} className="mt-4 border-t border-base-300 pt-3">
-    <label htmlFor={inputId} className="block text-sm font-medium">Add meal to {day}</label>
+  return <div role="group" aria-label={`Add meal to ${day}`}>
+    <label htmlFor={inputId} className="sr-only">Add meal to {day}</label>
     <div onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false); }}>
       <input id={inputId} ref={inputRef} role="combobox" aria-autocomplete="list" aria-expanded={open && Boolean(query.trim())}
         aria-controls={listId} aria-activedescendant={open && active >= 0 && results[active] ? `${listId}-${active}` : undefined}
@@ -76,7 +76,7 @@ export function AddPlannedMeal({ weekday, day }: { weekday: Weekday; day: string
             if (open && active >= 0 && results[active]) choose(results[active]);
           }
         }}
-        placeholder="Find a saved meal" className="input input-bordered mt-1 w-full" />
+        placeholder="Find a saved meal" className="input input-bordered w-full" />
       {open && query.trim() && <div id={listId} role="listbox" aria-label={`${day} meal suggestions`} className="mt-1 max-h-48 overflow-y-auto rounded-lg border border-base-300 bg-base-100">
         {resolvedQuery !== query ? <p role="status" className="p-2 text-sm">Searching meals…</p> :
           results.length === 0 ? <p role="status" className="p-2 text-sm">No matching meals.</p> :

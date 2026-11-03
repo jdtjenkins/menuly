@@ -29,17 +29,19 @@ export function PersonalFoodForm({ action, initial, edit = false, cancelHref = "
 
   return <form action={formAction} noValidate className="space-y-5" aria-label={edit ? "Edit personal food" : "Create personal food"}>
     {state.message && <p role="alert" className="text-error">{state.message}</p>}
-    {field("name", "Name", true)}
-    <div className="space-y-1">
-      {edit ? <p className="font-medium">Unit</p> : <label htmlFor="unit" className="block font-medium">Unit *</label>}
-      {edit ? <><p className="py-2">{unit === "ml" ? "ml" : "g"} (fixed)</p><input type="hidden" name="unit" value={unit} /></>
-        : <select id="unit" name="unit" value={unit} onChange={(event) => setUnit(event.target.value)} aria-invalid={Boolean(state.errors.unit)}
-          aria-describedby={state.errors.unit ? "unit-error" : undefined} className="select select-bordered w-full">
-          <option value="">Choose a unit</option><option value="g">g</option><option value="ml">ml</option>
-        </select>}
-      {state.errors.unit && <p id="unit-error" className="text-sm text-error">{state.errors.unit}</p>}
-    </div>
     <div className="grid gap-5 sm:grid-cols-2">
+      {field("name", "Name", true)}
+      <div className="space-y-1">
+        {edit ? <p className="font-medium">Unit</p> : <label htmlFor="unit" className="block font-medium">Unit *</label>}
+        {edit ? <><p className="py-2">{unit === "ml" ? "ml" : "g"} (fixed)</p><input type="hidden" name="unit" value={unit} /></>
+          : <select id="unit" name="unit" value={unit} onChange={(event) => setUnit(event.target.value)} aria-invalid={Boolean(state.errors.unit)}
+            aria-describedby={state.errors.unit ? "unit-error" : undefined} className="select select-bordered w-full">
+            <option value="">Choose a unit</option><option value="g">g</option><option value="ml">ml</option>
+          </select>}
+        {state.errors.unit && <p id="unit-error" className="text-sm text-error">{state.errors.unit}</p>}
+      </div>
+    </div>
+    <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
       {field("referenceAmount", "Reference amount", true)}
       {field("calories", "Calories (kcal)", true)}
       {field("protein", "Protein (g)", false)}

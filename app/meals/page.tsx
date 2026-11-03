@@ -10,10 +10,10 @@ export default function MealsPage() { return <Suspense fallback={<p>Loading meal
 async function MealsContent() {
   await connection();
   const account = await getCurrentAccount();
-  if (!account) return <section className="space-y-4"><h1 className="text-4xl font-bold">Meals</h1><p>Sign in with Google in the navigation to make private meals.</p></section>;
+  if (!account) return <section><h1 className="page-heading">Meals</h1><p className="page-lead">Sign in with Google in the navigation to make private meals.</p></section>;
   const meals = await listCurrentMeals();
   return <div className="space-y-6">
-    <div className="flex flex-wrap items-center justify-between gap-4"><div><h1 className="text-4xl font-bold">Meals</h1><p className="mt-2 text-base-content/75">Ingredient-only recipes, private to you.</p></div><Link href="/meals/new" className="btn btn-primary">Create meal</Link></div>
-    {meals.length ? <MealList meals={meals} /> : <p className="rounded-xl border border-base-300 bg-base-100 p-6">No meals yet. Create one to get started.</p>}
+    <div className="flex flex-wrap items-center justify-between gap-4"><div><h1 className="page-heading">Meals</h1><p className="page-lead">Ingredient-only recipes, private to you.</p></div><Link href="/meals/new" className="btn btn-primary">Create meal</Link></div>
+    {meals.length ? <MealList meals={meals} /> : <p className="surface-panel p-6">No meals yet. Create one to get started.</p>}
   </div>;
 }

@@ -48,7 +48,7 @@ The application SHALL issue a protected, expiring session after sign-in and SHAL
 - **THEN** the session does not authorize account access
 
 ### Requirement: Sign-out ends the current browser session
-The application SHALL provide an accessible sign-out action in the same right-side global-navigation position used for anonymous sign-in. The action SHALL be available from every primary area, remove the active browser session, and return the visitor to anonymous access.
+The application SHALL provide an accessible sign-out action in the desktop sidebar and mobile navigation panel. The action SHALL be available from every primary area, remove the active browser session, and return the visitor to anonymous access.
 
 #### Scenario: Sign out
 - **WHEN** a signed-in visitor signs out
@@ -56,19 +56,19 @@ The application SHALL provide an accessible sign-out action in the same right-si
 
 #### Scenario: Sign out from any primary area
 - **WHEN** a signed-in visitor opens Food, Meals, or Meal Plan
-- **THEN** the global navigation shows "Sign out" where "Sign in with Google" appeared before sign-in
+- **THEN** the desktop sidebar or open mobile panel shows "Sign out" where "Sign in with Google" appeared before sign-in
 
 ### Requirement: Global navigation offers Google-branded sign-in
-The application SHALL place the Google sign-in action on the right side of the global navigation for anonymous visitors. The action SHALL show a recognizable multicolor Google mark and the visible, accessible label "Sign in with Google". On wide screens it SHALL align vertically with the primary links, and pointer hover SHALL visibly change its appearance.
+The application SHALL place the Google sign-in action in the desktop sidebar and mobile navigation panel for anonymous visitors. The action SHALL show a recognizable multicolor Google mark and the visible, accessible label "Sign in with Google". Pointer hover SHALL visibly change its appearance.
 
 #### Scenario: Anonymous visitor uses navigation
-- **WHEN** an anonymous visitor views the global navigation on a wide or narrow screen
+- **WHEN** an anonymous visitor views the desktop sidebar or opens the mobile panel
 - **THEN** the Google-branded sign-in action is visible, keyboard accessible, and starts the verified Google sign-in flow
 
 #### Scenario: Button alignment and hover
-- **WHEN** an anonymous visitor views the navigation on a wide screen and hovers over the Google sign-in button
-- **THEN** the button lines up vertically with the primary links and shows a visible hover state
+- **WHEN** an anonymous visitor views the desktop sidebar and hovers over the Google sign-in button
+- **THEN** the button is aligned within the sidebar and shows a visible hover state
 
 #### Scenario: Signed-in visitor uses navigation
 - **WHEN** a visitor has an active application session
-- **THEN** the navigation replaces the sign-in action with sign-out in the same position
+- **THEN** the desktop sidebar or mobile panel replaces the sign-in action with sign-out in the same navigation position

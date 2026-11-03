@@ -13,5 +13,5 @@ async function EditMealContent({ params }: { params: Promise<{ id: string }> }) 
   const meal = await getCurrentMeal((await params).id);
   if (!meal) notFound();
   const choices = await searchCurrentMealFoodChoices("");
-  return <div className="mx-auto max-w-3xl space-y-6"><h1 className="text-3xl font-bold">Edit meal</h1><MealForm id={meal.id} initial={{ name: meal.name, servingYield: String(meal.servingYield), lines: meal.lines }} initialChoices={choices} /></div>;
+  return <div className="mx-auto max-w-3xl space-y-6"><h1 className="page-heading">Edit meal</h1><MealForm id={meal.id} initial={{ name: meal.name, servingYield: String(meal.servingYield), lines: meal.lines }} initialChoices={choices} /></div>;
 }

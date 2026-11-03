@@ -18,8 +18,8 @@ async function EditPersonalFood({ params }: Props) {
   const { id } = await params;
   const food = await getCurrentPersonalFood(id);
   if (!food) notFound();
-  return <div className="mx-auto max-w-2xl space-y-6">
-    <div><h1 className="text-3xl font-bold">Edit personal food</h1><p className="mt-2 text-base-content/70">The unit stays fixed after creation.</p></div>
+  return <div className="w-full min-w-0 space-y-6">
+    <div><h1 className="page-heading">Edit personal food</h1><p className="page-lead">The unit stays fixed after creation.</p></div>
     <PersonalFoodForm action={updatePersonalFoodAction.bind(null, id)} edit initial={{
       name: food.name, unit: food.unit, referenceAmount: String(food.referenceAmount), calories: String(food.calories),
       protein: food.protein === null ? "" : String(food.protein), carbohydrates: food.carbohydrates === null ? "" : String(food.carbohydrates),

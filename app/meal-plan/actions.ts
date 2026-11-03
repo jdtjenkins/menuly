@@ -22,7 +22,7 @@ export async function addPlannedMealAction(_state: PlanActionState, formData: Fo
 }
 
 export async function updatePlannedMealAction(id: string, _state: PlanActionState, formData: FormData): Promise<PlanActionState> {
-  const result = await updateCurrentPlannedMeal(id, readInput(formData));
+  const result = await updateCurrentPlannedMeal(id, { servings: String(formData.get("servings") ?? "") });
   if (!result.ok) return "notFound" in result ? { errors: {}, message: "Planned meal is no longer available." } : { errors: result.errors };
   return { errors: {}, success: true };
 }

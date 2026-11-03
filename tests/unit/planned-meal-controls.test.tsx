@@ -30,16 +30,16 @@ test("servings save after a pause without a Save card button", async () => {
   expect(mocks.update).not.toHaveBeenCalled();
   await tick();
   expect(lastInput().get("servings")).toBe("0.5");
-  expect(lastInput().get("weekday")).toBe("0");
+  expect(lastInput().get("weekday")).toBeNull();
   expect(screen.getByText("Saved")).toBeTruthy();
   expect(mocks.refresh).toHaveBeenCalledOnce();
 });
 
-test("a day selection saves immediately", async () => {
+test("card controls do not offer a day move", () => {
   render(<PlannedMealControls card={card} />);
-  await act(async () => { fireEvent.change(screen.getByRole("combobox", { name: "Day" }), { target: { value: "4" } }); await Promise.resolve(); });
-  expect(lastInput().get("weekday")).toBe("4");
-  expect(lastInput().get("servings")).toBe("1");
+  expect(screen.queryByRole("combobox", { name: "Day" })).toBeNull();
+  expect(screen.getByRole("spinbutton", { name: "Servings" })).toBeTruthy();
+  expect(screen.getByRole("button", { name: "Remove Dinner from Monday" })).toBeTruthy();
 });
 
 test("invalid servings show an error without a write", async () => {
@@ -52,7 +52,7 @@ test("invalid servings show an error without a write", async () => {
   expect(mocks.update).not.toHaveBeenCalled();
 });
 
-test("rapid edits and a day change keep the latest values", async () => {
+test("rapid serving edits keep the latest value", async () => {
   let resolveFirst: (value: typeof saved) => void = () => {};
   mocks.update.mockImplementationOnce(() => new Promise<typeof saved>((resolve) => { resolveFirst = resolve; })).mockResolvedValueOnce(saved);
   render(<PlannedMealControls card={card} />);
@@ -62,12 +62,11 @@ test("rapid edits and a day change keep the latest values", async () => {
   expect(mocks.update).toHaveBeenCalledTimes(1);
   fireEvent.change(servings, { target: { value: "3" } });
   await tick();
-  fireEvent.change(screen.getByRole("combobox", { name: "Day" }), { target: { value: "4" } });
   expect(mocks.update).toHaveBeenCalledTimes(1);
   await act(async () => { resolveFirst(saved); await Promise.resolve(); });
   expect(mocks.update).toHaveBeenCalledTimes(2);
   expect(lastInput().get("servings")).toBe("3");
-  expect(lastInput().get("weekday")).toBe("4");
+  expect(lastInput().get("weekday")).toBeNull();
   expect(mocks.refresh).toHaveBeenCalledOnce();
 });
 

@@ -20,9 +20,9 @@ async function NewPersonalFood({ searchParams }: NewPersonalFoodPageProps) {
   const sourceId = typeof clone === "string" ? clone : null;
   const initial = sourceId ? await getCurrentGlobalCloneDraft(sourceId) : undefined;
   if (sourceId && !initial) notFound();
-  return <div className="mx-auto max-w-2xl space-y-6">
-    <div><h1 className="text-3xl font-bold">{sourceId ? "Copy global food" : "Create personal food"}</h1>
-      <p className="mt-2 text-base-content/70">{sourceId ? "Review these values before saving an independent food in My foods." : "Add your own food and reference nutrition."}</p>
+  return <div className="w-full min-w-0 space-y-6">
+    <div><h1 className="page-heading">{sourceId ? "Copy global food" : "Create personal food"}</h1>
+      <p className="page-lead">{sourceId ? "Review these values before saving an independent food in My foods." : "Add your own food and reference nutrition."}</p>
       {sourceId && initial?.calories === "" && <p className="mt-2 text-sm text-warning">The global food has no calories. Enter calories before saving your copy.</p>}
     </div>
     <PersonalFoodForm key={sourceId ?? "new"} action={sourceId ? createGlobalCloneAction.bind(null, sourceId) : createPersonalFoodAction}

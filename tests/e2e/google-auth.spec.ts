@@ -5,37 +5,35 @@ import { encode } from "next-auth/jwt";
 test("Google callback establishes a minimal account session and sign-out restores anonymous access", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto("/food");
-  const navigation = page.getByRole("navigation", { name: "Primary navigation" });
+  const toggle = page.getByRole("button", { name: "Open navigation menu" });
+  await toggle.click();
+  const navigation = page.getByRole("dialog", { name: "Navigation menu" }).getByRole("navigation", { name: "Primary navigation" });
   const signIn = navigation.getByRole("button", { name: "Sign in with Google" });
   const signOut = navigation.getByRole("button", { name: "Sign out" });
   await expect(signIn).toBeVisible();
   await expect(signOut).toHaveCount(0);
-  const signInBox = await signIn.boundingBox();
-  expect(signInBox).not.toBeNull();
   await expect(page.getByRole("region", { name: "Search foods" }).getByRole("button", { name: "Sign in with Google" })).toHaveCount(0);
   await signIn.focus();
   await page.keyboard.press("Enter");
   await expect(page.getByRole("heading", { name: "Local test identity" })).toBeVisible();
   await page.getByRole("link", { name: "Continue as Test User" }).click();
   await expect(page).toHaveURL(/\/food$/);
+  await toggle.click();
   await expect(signIn).toHaveCount(0);
   await expect(signOut).toBeVisible();
   await expect(page.getByRole("region", { name: "Search foods" }).getByRole("button", { name: "Sign out" })).toHaveCount(0);
-  const signOutBox = await signOut.boundingBox();
-  expect(signOutBox).not.toBeNull();
-  expect(Math.abs(signOutBox!.x + signOutBox!.width - signInBox!.x - signInBox!.width)).toBeLessThanOrEqual(2);
   await page.reload();
+  await toggle.click();
   await expect(signOut).toBeVisible();
   for (const [label, path] of [["Meals", "/meals"], ["Meal Plan", "/meal-plan"], ["Food", "/food"]] as const) {
     await navigation.getByRole("link", { name: label }).click();
     await expect(page).toHaveURL(new RegExp(`${path}$`));
+    await toggle.click();
     await expect(signOut).toBeVisible();
     await expect(signIn).toHaveCount(0);
-    const buttonBox = await signOut.boundingBox();
-    expect(buttonBox).not.toBeNull();
-    expect(Math.abs(buttonBox!.x + buttonBox!.width - signInBox!.x - signInBox!.width)).toBeLessThanOrEqual(2);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   }
+  await page.getByRole("button", { name: "Close navigation menu" }).click();
   await expect(page.getByRole("list", { name: "Full food catalog" })).toHaveCount(0);
   await page.getByRole("link", { name: "See global foods" }).focus();
   await page.keyboard.press("Enter");
@@ -60,9 +58,11 @@ test("Google callback establishes a minimal account session and sign-out restore
   for (const secret of ["private@example.com", "Private Test Name", "fixture-access-token", "picture"]) {
     expect(sessionText).not.toContain(secret);
   }
+  await toggle.click();
   await signOut.focus();
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/\/food$/);
+  await toggle.click();
   await expect(signIn).toBeVisible();
   await expect(signOut).toHaveCount(0);
   const anonymous = await page.request.get("/food?q=Apple");

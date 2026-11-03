@@ -2,7 +2,7 @@
 
 This roadmap orders the planned OpenSpec changes for V1. The overall product requirements, user journeys, architecture, and scope are in the [V1 product vision](product-vision.md). Each change below should be specified, reviewed, implemented, and validated on its own after its dependencies are complete.
 
-Statuses are **Not Started**, **In Progress**, or **Complete**. `app-ui-and-test-foundation`, `libsql-data-foundation`, `public-global-food-search`, `google-sign-in-and-catalog-access`, `personal-foods`, `clone-global-food`, `ingredient-meals-and-nutrition`, `archive-personal-food`, and `weekly-meal-plan` are complete; the remaining changes have not started.
+Statuses are **Not Started**, **In Progress**, or **Complete**. Completed changes are marked in their sections below. The current shell follows `dark-menuly-workspace`; the earlier light layout entries record the design that preceded it.
 
 ## 1. `app-ui-and-test-foundation`
 
@@ -106,7 +106,7 @@ Statuses are **Not Started**, **In Progress**, or **Complete**. `app-ui-and-test
 - **Acceptance criteria:**
   - Users can select saved meals through autocomplete and place multiple cards on any day.
   - Each card has a positive planned serving count, including fractional values; the same meal can appear more than once.
-  - Users can remove cards or reassign them to another day, and the plan persists between visits.
+  - Users can edit a card's planned servings or remove it. Cards keep the day selected when they were added, and the plan persists between visits.
   - Users cannot access or change another user's plan.
 
 ## 11. `generated-shopping-list`
@@ -137,7 +137,7 @@ Statuses are **Not Started**, **In Progress**, or **Complete**. `app-ui-and-test
 - **Description:** Add drag-and-drop alongside the existing autocomplete planning flow.
 - **Acceptance criteria:**
   - Users can drag a saved meal from the Meals list onto a day to add a card.
-  - Users can drag an existing card between days.
+  - Existing cards stay on the day where they were added and cannot be dragged between days.
   - Autocomplete and non-drag controls remain available.
 
 ## 14. `account-deletion`
@@ -160,3 +160,45 @@ Statuses are **Not Started**, **In Progress**, or **Complete**. `app-ui-and-test
   - Import validation checks the expected calories, protein, carbohydrates, and fat values.
   - If an imported entry is incomplete, meals using it still show the agreed incomplete-nutrition warning.
   - No automated catalog refresh is introduced.
+
+## 16. `modern-responsive-app-layout`
+
+- **Status:** Complete
+- **Dependencies:** 1 — `app-ui-and-test-foundation`; 10 — `weekly-meal-plan`
+- **Description:** Widen the shared desktop shell, make the app responsive on mobile, refresh its daisyUI palette and action styling, and present the weekly table as a standalone board.
+- **Acceptance criteria:**
+  - Header and main content align in a wider desktop layout while ordinary mobile content stays within the viewport.
+  - Actions use a consistent visual hierarchy with visible focus and disabled states.
+  - The seven-day plan remains a semantic table and scrolls inside its own board region on narrow screens, without an enclosing card.
+
+## 17. `light-railway-inspired-navigation`
+
+- **Status:** Complete
+- **Dependencies:** 16 — `modern-responsive-app-layout`
+- **Description:** Keep the wide desktop top navigation, add a mobile slide-out navigation panel with account controls, and make Food, Meals, and Meal Plan share a restrained light presentation.
+- **Acceptance criteria:**
+  - The mobile panel contains Food, Meals, Meal Plan, and the existing sign-in or sign-out action, and closes through its control, backdrop, Escape, or route selection.
+  - Desktop top links and account action remain visible, with current-area indication and keyboard focus.
+  - Primary pages use consistent headings and content surfaces, forms remain comfortably narrow, and the weekly board stays wide without page-level mobile overflow.
+
+## 18. `dark-menuly-workspace`
+
+- **Status:** Complete
+- **Dependencies:** 16 — `modern-responsive-app-layout`; 17 — `light-railway-inspired-navigation`
+- **Description:** Present a dark-only custom Menuly daisyUI theme, persistent labelled desktop sidebar, mobile slide-out navigation, and a subtle dotted content canvas.
+- **Acceptance criteria:**
+  - Food, Meals, Meal Plan, and their forms use one dark Menuly palette with legible text and visible hover, focus, disabled, validation, and feedback states.
+  - The full desktop sidebar keeps all three current-area links and the account action visible without a redundant Workspace caption; the mobile drawer retains the same controls and closes by control, backdrop, Escape, route selection, or crossing the desktop breakpoint.
+  - Dots appear only on the main canvas, behind opaque content surfaces, and disappear in forced-colours mode.
+  - The main area uses the width beside the sidebar; personal food Create, Copy, and Edit pages use the full content width while meal forms remain readable.
+  - Each weekly day has an accessible meal search at the top of its column, with no visible search label or separator and no divider beneath the day heading. On mobile, one day fills the board width and the remaining visible height below the heading and scroll hint. On desktop, all seven days fill the remaining visible height below the heading. Days grow taller for meal cards, and the mobile hint explains that other days are reached by scrolling. The board scrolls horizontally within the page without nested vertical scrolling or page-level horizontal overflow.
+
+## 19. `fixed-day-meal-cards`
+
+- **Status:** Complete
+- **Dependencies:** 10 — `weekly-meal-plan`; 18 — `dark-menuly-workspace`
+- **Description:** Keep planned meal cards on their assigned day and simplify each card to serving editing and removal.
+- **Acceptance criteria:**
+  - A card's controls have no Day selector or move action, including on mobile.
+  - Automatic serving edits and card removal remain available.
+  - An update request cannot change the card's assigned day, including when an alternate weekday is supplied.

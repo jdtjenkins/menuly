@@ -7,6 +7,7 @@ test("personal foods can be created and edited, then disappear after sign-out", 
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto("/food");
   await expect(page.getByRole("heading", { name: "My foods" })).toHaveCount(0);
+  await page.getByRole("button", { name: "Open navigation menu" }).click();
   await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "Sign in with Google" }).click();
   await page.getByRole("link", { name: "Continue as Test User" }).click();
   await expect(page.getByRole("heading", { name: "My foods" })).toBeVisible();
@@ -75,6 +76,7 @@ test("personal foods can be created and edited, then disappear after sign-out", 
   await expect(page.getByRole("heading", { name: "My foods" })).toBeVisible();
   await expect(page.getByText("No personal foods yet. Create one to get started.")).toBeVisible();
   await expect(page.getByRole("list", { name: "My foods" }).getByText(name)).toHaveCount(0);
+  await page.getByRole("button", { name: "Open navigation menu" }).click();
   await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "Sign out" }).click();
   await expect(page).toHaveURL(/\/food$/);
   await expect(page.getByRole("heading", { name: "My foods" })).toHaveCount(0);

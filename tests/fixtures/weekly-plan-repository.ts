@@ -24,13 +24,13 @@ async function main() {
     assert.notEqual(first.id, second.id);
     assert.deepEqual((await listPlannedMeals(client, "owner")).map(({ id, servings }) => [id, servings]), [[first.id, 1.5], [second.id, 2]]);
     assert.deepEqual(await listPlannedMeals(client, "other"), []);
-    assert.deepEqual(await updatePlannedMeal(client, "other", first.id, { weekday: "4", servings: "3" }), { ok: false, notFound: true });
+    assert.deepEqual(await updatePlannedMeal(client, "other", first.id, { servings: "3" }), { ok: false, notFound: true });
     assert.equal(await removePlannedMeal(client, "other", first.id), false);
-    assert.equal((await updatePlannedMeal(client, "owner", first.id, { weekday: "7", servings: "1" })).ok, false);
-    assert.equal((await updatePlannedMeal(client, "owner", first.id, { weekday: "4", servings: "0" })).ok, false);
-    assert.equal((await updatePlannedMeal(client, "owner", first.id, { weekday: "4", servings: "0.5" })).ok, true);
+    assert.equal((await updatePlannedMeal(client, "owner", first.id, { servings: "0" })).ok, false);
+    const attemptedMove = { weekday: "4", servings: "0.5" };
+    assert.equal((await updatePlannedMeal(client, "owner", first.id, attemptedMove)).ok, true);
     await client.execute("UPDATE meals SET name = 'New dinner' WHERE id = 'mine'");
-    assert.deepEqual((await listPlannedMeals(client, "owner")).map(({ mealName, weekday, servings }) => [mealName, weekday, servings]), [["New dinner", 2, 2], ["New dinner", 4, 0.5]]);
+    assert.deepEqual((await listPlannedMeals(client, "owner")).map(({ mealName, weekday, servings }) => [mealName, weekday, servings]), [["New dinner", 2, 0.5], ["New dinner", 2, 2]]);
     assert.equal(await removePlannedMeal(client, "owner", first.id), true);
     assert.deepEqual((await listPlannedMeals(client, "owner")).map(({ id }) => id), [second.id]);
   } finally { client.close(); }

@@ -11,5 +11,5 @@ async function NewMealContent() {
   await connection();
   if (!await getCurrentAccount()) redirect("/meals");
   const choices = await searchCurrentMealFoodChoices("");
-  return <div className="mx-auto max-w-3xl space-y-6"><h1 className="text-3xl font-bold">Create meal</h1><MealForm initialChoices={choices} /></div>;
+  return <div className="mx-auto max-w-3xl space-y-6"><h1 className="page-heading">Create meal</h1><MealForm initialChoices={choices} /></div>;
 }

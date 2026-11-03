@@ -9,7 +9,7 @@ export function ArchiveFoodControl({ id, name }: { id: string; name: string }) {
   const [meals, setMeals] = useState<AffectedMeal[]>([]);
   const [loading, startTransition] = useTransition();
   const [error, setError] = useState("");
-  if (!confirming) return <div><button type="button" className="btn btn-outline btn-sm" disabled={loading} onClick={() => startTransition(async () => {
+  if (!confirming) return <div><button type="button" className="btn btn-outline btn-error btn-sm" disabled={loading} onClick={() => startTransition(async () => {
     const impact = await getArchiveImpactAction(id);
     if (impact === null) { setError("Food is no longer available."); return; }
     setMeals(impact); setConfirming(true); setError("");

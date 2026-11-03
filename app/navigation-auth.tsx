@@ -7,7 +7,7 @@ export async function NavigationAuth() {
   if (await getCurrentAccount()) {
     return (
       <form action={signOutOfMenuly}>
-        <button type="submit" className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl border border-base-300 bg-base-100 px-4 text-sm font-semibold transition-colors hover:bg-base-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        <button type="submit" className="btn btn-ghost min-h-11 w-full justify-start font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Sign out
         </button>
       </form>
@@ -18,7 +18,7 @@ export async function NavigationAuth() {
     <form action={signInWithGoogle}>
       <button
         type="submit"
-        className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-3 whitespace-nowrap rounded-xl border border-[#dadce0] bg-white px-4 text-sm font-semibold text-[#3c4043] shadow-sm transition-[background-color,border-color,box-shadow] hover:border-[#4285f4] hover:bg-[#e8f0fe] hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-base-300 bg-base-100 px-2 text-sm font-semibold text-base-content transition-[background-color,border-color] hover:border-primary/60 hover:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
       >
         <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="size-5 shrink-0">
           <path fill="#4285F4" d="M22.56 12.25c0-.81-.07-1.42-.23-2.04H12V14h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-7.84Z" />

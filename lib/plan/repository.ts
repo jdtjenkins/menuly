@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { Client } from "@libsql/client";
-import { validatePlanInput, type PlanInput, type PlanErrors, type Weekday } from "./validation";
+import { validatePlanInput, validatePlanServingInput, type PlanInput, type PlanServingInput, type PlanErrors, type Weekday } from "./validation";
 
 export type PlannedMeal = { id: string; mealId: string; mealName: string; weekday: Weekday; servings: number };
 export type MealChoice = { id: string; name: string; servingYield: number };
@@ -36,10 +36,10 @@ export async function addPlannedMeal(client: Client, ownerId: string, mealId: st
   }
 }
 
-export async function updatePlannedMeal(client: Client, ownerId: string, id: string, input: PlanInput): Promise<PlanResult> {
-  const parsed = validatePlanInput(input);
+export async function updatePlannedMeal(client: Client, ownerId: string, id: string, input: PlanServingInput): Promise<PlanResult> {
+  const parsed = validatePlanServingInput(input);
   if (!parsed.ok) return parsed;
-  const result = await client.execute({ sql: "UPDATE planned_meals SET weekday = ?, servings = ? WHERE id = ? AND user_id = ?", args: [parsed.values.weekday, parsed.values.servings, id, ownerId] });
+  const result = await client.execute({ sql: "UPDATE planned_meals SET servings = ? WHERE id = ? AND user_id = ?", args: [parsed.values.servings, id, ownerId] });
   return result.rowsAffected === 1 ? { ok: true, id } : { ok: false, notFound: true };
 }
 

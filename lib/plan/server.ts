@@ -2,7 +2,7 @@ import "server-only";
 import { requireAccount } from "../auth/current-account";
 import { getDatabaseClient } from "../db/server";
 import { addPlannedMeal, listPlannedMeals, removePlannedMeal, searchPlanMeals, updatePlannedMeal } from "./repository";
-import type { PlanInput } from "./validation";
+import type { PlanInput, PlanServingInput } from "./validation";
 
 export async function listCurrentPlannedMeals() {
   const account = await requireAccount();
@@ -19,7 +19,7 @@ export async function addCurrentPlannedMeal(mealId: string, input: PlanInput) {
   return addPlannedMeal(getDatabaseClient(), account.id, mealId, input);
 }
 
-export async function updateCurrentPlannedMeal(id: string, input: PlanInput) {
+export async function updateCurrentPlannedMeal(id: string, input: PlanServingInput) {
   const account = await requireAccount();
   return updatePlannedMeal(getDatabaseClient(), account.id, id, input);
 }

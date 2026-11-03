@@ -11,11 +11,10 @@ import { ArchiveFoodControl } from "./personal/archive-food-control";
 type FoodPageProps = { searchParams: Promise<{ q?: string | string[]; page?: string | string[]; personalPage?: string | string[]; view?: string | string[] }> };
 
 export default function FoodPage({ searchParams }: FoodPageProps) {
-  return <div className="space-y-8">
-    <div className="max-w-2xl space-y-3">
-      <p className="text-sm font-bold uppercase tracking-[0.18em] text-primary">Your kitchen, organised</p>
-      <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Food</h1>
-      <p className="text-lg text-base-content/75">Find a food in the shared catalog.</p>
+  return <div className="space-y-6">
+    <div className="max-w-2xl">
+      <h1 className="page-heading">Food</h1>
+      <p className="page-lead">Find a food in the shared catalog.</p>
     </div>
     <Suspense fallback={<p className="text-base-content/75">Loading foods…</p>}>
       <FoodContents searchParams={searchParams} />
@@ -47,10 +46,10 @@ async function FoodSearch({ searchParams }: FoodPageProps) {
   const publicFoods = !account && query ? await searchPublicFoodCatalog(query) : [];
   const pageUrl = (nextPage: number) => `/food?${new URLSearchParams({ ...(account ? { view: "global" } : {}), ...(query ? { q: query } : {}), page: String(nextPage) })}`;
 
-  return <section className="card border border-base-300 bg-base-100 shadow-sm" aria-labelledby="food-search-title">
-    <div className="card-body gap-5 p-7 sm:p-10">
+  return <section className="surface-panel" aria-labelledby="food-search-title">
+    <div className="space-y-5 p-5 sm:p-6">
       <div>
-        <h2 id="food-search-title" className="card-title text-2xl">Search foods</h2>
+        <h2 id="food-search-title" className="section-heading">Search foods</h2>
         <p className="mt-2 text-base-content/75">{account ? "Browse foods and their reference nutrition." : "Search by name to see calories. Use Sign in with Google in the navigation for full nutrition."}</p>
       </div>
       <form action="/food" method="get" role="search" className="flex flex-col gap-3 sm:flex-row">
@@ -64,7 +63,7 @@ async function FoodSearch({ searchParams }: FoodPageProps) {
         {account && full ? full.foods.length === 0 ? <p className="text-base-content/75">No foods found{query ? ` for “${query}”` : ""}.</p> : <div className="space-y-4">
           <p className="text-sm text-base-content/75">Page {full.page} · Showing {full.foods.length} foods</p>
           <ul className="space-y-3" aria-label="Full food catalog">
-            {full.foods.map((food) => <li key={food.id} className="rounded-xl border border-base-300 p-4">
+            {full.foods.map((food) => <li key={food.id} className="surface-row p-4">
               <h3 className="font-semibold">{food.name}</h3>
               <p className="text-sm text-base-content/75">Per {food.referenceAmount} {food.unit}</p>
               <Link href={`/food/personal/new?clone=${encodeURIComponent(food.id)}`} className="btn btn-outline btn-sm mt-3" aria-label={`Copy ${food.name} to My foods`}>Copy to My foods</Link>
@@ -104,16 +103,16 @@ async function PersonalFoods({ searchParams }: FoodPageProps) {
   const result = await listCurrentPersonalFoods(page);
   const pageHref = (next: number) => `/food?personalPage=${next}#personal-foods`;
 
-  return <section id="personal-foods" aria-labelledby="personal-foods-title" className="card border border-base-300 bg-base-100 shadow-sm">
-    <div className="card-body gap-5 p-7 sm:p-10">
+  return <section id="personal-foods" aria-labelledby="personal-foods-title" className="surface-panel">
+    <div className="space-y-5 p-5 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div><h2 id="personal-foods-title" className="card-title text-2xl">My foods</h2><p className="mt-2 text-base-content/75">Foods you create are private to your account.</p></div>
+        <div><h2 id="personal-foods-title" className="section-heading">My foods</h2><p className="mt-2 text-base-content/75">Foods you create are private to your account.</p></div>
         <Link href="/food/personal/new" className="btn btn-primary">Create personal food</Link>
       </div>
       <Link href="/food?view=global" className="btn btn-outline w-fit">See global foods</Link>
       {result.foods.length === 0 ? <p className="text-base-content/75">No personal foods yet. Create one to get started.</p> : <>
         <ul className="space-y-3" aria-label="My foods">
-          {result.foods.map((food) => <li key={food.id} className="rounded-xl border border-base-300 p-4">
+          {result.foods.map((food) => <li key={food.id} className="surface-row p-4">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div><h3 className="font-semibold">{food.name}</h3><p className="text-sm text-base-content/75">Per {food.referenceAmount} {food.unit}</p></div>
               <div className="flex flex-wrap items-center gap-2">

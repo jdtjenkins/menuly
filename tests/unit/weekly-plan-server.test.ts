@@ -16,7 +16,7 @@ test("anonymous plan operations do not reach the database", async () => {
   await expect(listCurrentPlannedMeals()).rejects.toThrow("Authentication required");
   await expect(searchCurrentPlanMeals("Dinner")).rejects.toThrow("Authentication required");
   await expect(addCurrentPlannedMeal("meal", input)).rejects.toThrow("Authentication required");
-  await expect(updateCurrentPlannedMeal("card", input)).rejects.toThrow("Authentication required");
+  await expect(updateCurrentPlannedMeal("card", { servings: input.servings })).rejects.toThrow("Authentication required");
   await expect(removeCurrentPlannedMeal("card")).rejects.toThrow("Authentication required");
   expect(mocks.getDatabaseClient).not.toHaveBeenCalled();
 });
@@ -29,11 +29,11 @@ test("plan operations scope reads and writes to the current owner", async () => 
   await listCurrentPlannedMeals();
   await searchCurrentPlanMeals("Dinner");
   expect(await addCurrentPlannedMeal("foreign", input)).toEqual({ ok: false, notFound: true });
-  expect(await updateCurrentPlannedMeal("foreign-card", input)).toEqual({ ok: false, notFound: true });
+  expect(await updateCurrentPlannedMeal("foreign-card", { servings: input.servings })).toEqual({ ok: false, notFound: true });
   expect(await removeCurrentPlannedMeal("foreign-card")).toBe(false);
   expect(mocks.list).toHaveBeenCalledWith({}, "owner");
   expect(mocks.search).toHaveBeenCalledWith({}, "owner", "Dinner");
   expect(mocks.add).toHaveBeenCalledWith({}, "owner", "foreign", input);
-  expect(mocks.update).toHaveBeenCalledWith({}, "owner", "foreign-card", input);
+  expect(mocks.update).toHaveBeenCalledWith({}, "owner", "foreign-card", { servings: input.servings });
   expect(mocks.remove).toHaveBeenCalledWith({}, "owner", "foreign-card");
 });
