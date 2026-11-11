@@ -111,7 +111,7 @@ Statuses are **Not Started**, **In Progress**, or **Complete**. Completed change
 
 ## 11. `generated-shopping-list`
 
-- **Status:** Not Started
+- **Status:** Complete
 - **Dependencies:** 8 — `ingredient-meals-and-nutrition`; 10 — `weekly-meal-plan`
 - **Description:** Generate exact shopping quantities from the current weekly plan.
 - **Acceptance criteria:**

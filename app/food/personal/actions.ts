@@ -36,6 +36,7 @@ export async function updatePersonalFoodAction(id: string, _previous: PersonalFo
     return { input, errors: result.errors };
   }
   revalidatePath("/food");
+  revalidatePath("/meal-plan");
   redirect("/food#personal-foods");
 }
 
@@ -48,5 +49,6 @@ export async function archivePersonalFoodAction(id: string, meals: AffectedMeal[
   if (result.status === "stale") return result;
   revalidatePath("/food");
   revalidatePath("/meals");
+  revalidatePath("/meal-plan");
   redirect("/food#personal-foods");
 }

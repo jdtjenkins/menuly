@@ -22,6 +22,7 @@ test("planned-card update accepts servings without moving the day", async () => 
   form.set("servings", "0.5");
   expect(await updatePlannedMealAction("card", { errors: {} }, form)).toEqual({ errors: {}, success: true });
   expect(mocks.update).toHaveBeenCalledWith("card", { servings: "0.5" });
+  expect(mocks.revalidate).toHaveBeenCalledWith("/meal-plan");
 });
 
 test("planned-card update preserves serving errors", async () => {
@@ -31,4 +32,5 @@ test("planned-card update preserves serving errors", async () => {
   expect(await updatePlannedMealAction("card", { errors: {} }, form)).toEqual({
     errors: { servings: "Enter a positive serving quantity." },
   });
+  expect(mocks.revalidate).not.toHaveBeenCalled();
 });

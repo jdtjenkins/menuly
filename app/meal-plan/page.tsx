@@ -3,9 +3,11 @@ import Link from "next/link";
 import { connection } from "next/server";
 import { getCurrentAccount } from "../../lib/auth/current-account";
 import { listCurrentPlannedMeals } from "../../lib/plan/server";
+import { listCurrentShoppingItems } from "../../lib/shopping/server";
 import { weekdays, type Weekday } from "../../lib/plan/validation";
 import { AddPlannedMeal } from "./add-planned-meal";
 import { PlannedMealControls } from "./planned-meal-controls";
+import { ShoppingList } from "./shopping-list";
 
 export default function MealPlanPage() {
   return <Suspense fallback={<p>Loading meal plan…</p>}><MealPlanContent /></Suspense>;
@@ -15,10 +17,11 @@ async function MealPlanContent() {
   await connection();
   const account = await getCurrentAccount();
   if (!account) return <section><h1 className="page-heading">Meal Plan</h1><p className="page-lead">Sign in with Google in the navigation to plan your private meals.</p></section>;
-  const cards = await listCurrentPlannedMeals();
+  const [cards, shoppingItems] = await Promise.all([listCurrentPlannedMeals(), listCurrentShoppingItems()]);
   return <div className="weekly-plan-page min-w-0 space-y-6">
     <div><h1 className="page-heading">Meal Plan</h1><p className="page-lead">Your reusable Monday-to-Sunday plan.</p></div>
     {cards.length === 0 && <p className="text-sm text-base-content/75">Your plan is empty. <Link href="/meals/new" className="link link-primary">Create a meal</Link> or add one below.</p>}
+    <ShoppingList items={shoppingItems} />
     <section aria-label="Weekly plan board" className="weekly-plan-board min-w-0">
       <p id="weekly-plan-scroll-hint" className="mb-3 flex justify-end text-sm font-medium sm:hidden">
         <span className="rounded-full border border-base-300 bg-base-100 px-3 py-1.5 text-base-content/80">Scroll to see more days <span aria-hidden="true" className="text-primary">→</span></span>

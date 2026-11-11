@@ -52,11 +52,19 @@ Each day column SHALL offer an accessible autocomplete of the owner's saved meal
 - **THEN** no card is created and the user receives actionable feedback without disclosure of another user's meal
 
 ### Requirement: An owner can manage each planned card
-The application SHALL save a card's day immediately when selected and save a positive finite planned serving count automatically after a brief pause in editing, without a Save card button. The owner SHALL be able to remove the card. These changes SHALL leave its meal reference and other occurrences unchanged.
+The application SHALL keep a planned card on the day selected when it was added. The owner SHALL be able to change its positive finite planned serving count automatically after a brief pause in editing, without a Save card button, and SHALL be able to remove the card. These changes SHALL leave its day, meal reference, and other occurrences unchanged. Card controls SHALL NOT offer a day selector.
+
+#### Scenario: Card has no day-move control
+- **WHEN** the owner views a planned meal card
+- **THEN** its controls show serving editing and removal without a Day selector or other way to move that card
 
 #### Scenario: Move a card with controls
-- **WHEN** the owner reassigns a card from Monday to Friday
-- **THEN** the change saves without another action and that card appears on Friday with its meal and serving count preserved
+- **WHEN** the owner attempts to reassign a card from Monday to Friday using its controls
+- **THEN** no move control is available and the card remains on Monday
+
+#### Scenario: Update cannot change the assigned day
+- **WHEN** an update request includes a different day for an existing card
+- **THEN** the card remains on its originally assigned day
 
 #### Scenario: Change serving count
 - **WHEN** the owner changes one card from two servings to 0.5 servings
@@ -71,7 +79,7 @@ The application SHALL save a card's day immediately when selected and save a pos
 - **THEN** only the selected card disappears
 
 #### Scenario: Invalid card update
-- **WHEN** a card update supplies an invalid day or a serving count that is blank, zero, negative, or not finite
+- **WHEN** a card update supplies a serving count that is blank, zero, negative, or not finite
 - **THEN** the invalid change is not saved, the existing stored card remains unchanged, and the invalid input is identified
 
 #### Scenario: Automatic save fails

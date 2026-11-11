@@ -23,6 +23,7 @@ export async function saveMealAction(id: string | null, _state: MealFormState, f
   const result = await saveCurrentMeal(readInput(formData), id ?? undefined);
   if (!result.ok) return "notFound" in result ? { errors: {}, message: "Meal not found." } : { errors: result.errors };
   revalidatePath("/meals");
+  revalidatePath("/meal-plan");
   redirect(`/meals/${encodeURIComponent(result.id)}`);
 }
 
