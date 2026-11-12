@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { expect, test } from "vitest";
 
-test.each(["fresh", "partial", "rerun", "failure", "concurrent", "edited", "missing", "separate-ledger", "line-endings"])("migrations handle %s", (scenario) => {
+test.each(["fresh", "partial", "rerun", "failure", "concurrent", "edited", "missing", "separate-ledger", "line-endings", "historical-weekday"])("migrations handle %s", (scenario) => {
   const projectRoot = mkdtempSync(join(tmpdir(), "menuly-migrations-"));
   try {
     const result = spawnSync(

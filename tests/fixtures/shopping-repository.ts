@@ -4,6 +4,7 @@ import { createDatabaseClient } from "../../lib/db/client";
 import { parseDatabaseConfig } from "../../lib/db/config";
 import { applyMigrations, loadMigrations } from "../../lib/db/migrations";
 import { listShoppingItems } from "../../lib/shopping/repository";
+import { listShoppingChecklist, setShoppingChecked } from "../../lib/shopping/checklist-repository";
 
 async function main() {
   const root = process.argv[2];
@@ -23,7 +24,17 @@ async function main() {
       { source: "personal", foodId: "mine", name: "Oats", unit: "g", amount: 50 },
     ]);
     assert.deepEqual(await listShoppingItems(client, "other"), [{ source: "personal", foodId: "theirs", name: "Private", unit: "g", amount: 250 }]);
+    assert.equal(await setShoppingChecked(client, "owner", "global", "g", true), true);
+    assert.equal(await setShoppingChecked(client, "owner", "personal", "mine", true), true);
+    assert.equal((await listShoppingChecklist(client, "owner")).filter((item) => item.checked).length, 2);
+    assert.equal((await listShoppingChecklist(client, "other"))[0].checked, false);
+    assert.equal(await setShoppingChecked(client, "owner", "personal", "theirs", true), false);
+    assert.equal(await setShoppingChecked(client, "owner", "global", "absent", true), false);
+    assert.equal(await setShoppingChecked(client, "owner", "global", "g", false), true);
+    assert.equal((await listShoppingChecklist(client, "owner")).find((item) => item.foodId === "g")?.checked, false);
+    assert.equal((await listShoppingChecklist(client, "owner")).find((item) => item.foodId === "mine")?.checked, true);
     await client.execute("UPDATE personal_foods SET name = 'Archived oats' WHERE id = 'mine'");
+    assert.equal((await listShoppingChecklist(client, "owner")).find((item) => item.foodId === "mine")?.checked, true);
     await client.execute("UPDATE meals SET serving_yield = 2 WHERE id = 'meal'");
     assert.deepEqual((await listShoppingItems(client, "owner")).map(({ name, amount }) => [name, amount]), [["Archived oats", 100], ["Milk", 200], ["Oats", 300]]);
     await client.execute("DELETE FROM planned_meals WHERE id = 'card'");

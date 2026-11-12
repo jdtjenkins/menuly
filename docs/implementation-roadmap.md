@@ -122,7 +122,7 @@ Statuses are **Not Started**, **In Progress**, or **Complete**. Completed change
 
 ## 12. `shopping-checklist-and-clear-week`
 
-- **Status:** Not Started
+- **Status:** Complete
 - **Dependencies:** 10 — `weekly-meal-plan`; 11 — `generated-shopping-list`
 - **Description:** Add persistent in-app checkboxes and a Clear Week action.
 - **Acceptance criteria:**

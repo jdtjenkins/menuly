@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { createDatabaseClient } from "../../lib/db/client";
@@ -113,6 +114,25 @@ async function main() {
       assert.deepEqual(await applyMigrations(client, await loadMigrations(directory)), []);
       writeMigration(directory, "0001_first", ["CREATE TABLE changed (value TEXT)"]);
       await assert.rejects(applyMigrations(client, await loadMigrations(directory)), /Migration history mismatch/);
+    } else if (scenario === "historical-weekday") {
+      const current = await loadMigrations(join(process.cwd(), "migrations"));
+      const weekly = current.find((migration) => migration.id === "0006_weekly-meal-plan");
+      assert.ok(weekly);
+      const source = readFileSync(join(process.cwd(), "migrations/0006_weekly-meal-plan.ts"), "utf8").replaceAll("\r\n", "\n");
+      const oldCheck = "weekday INTEGER NOT NULL CHECK (weekday BETWEEN 0 AND 6)";
+      const historicalCheck = "weekday INTEGER NOT NULL CHECK (typeof(weekday) = 'integer' AND weekday BETWEEN 0 AND 6)";
+      assert.ok(source.includes(oldCheck));
+      const historicalHash = createHash("sha256").update(source.replace(oldCheck, historicalCheck)).digest("hex");
+      assert.equal(historicalHash, "e8d136cb62b2cbb46ed21c89619e4d0e002bdb5d3397c68c5f4cc30d31af8dff");
+      const historical = { ...weekly, hash: historicalHash, statements: weekly.statements.map((statement) => statement.replace(oldCheck, historicalCheck)) };
+      assert.deepEqual(await applyMigrations(client, [...current.filter((migration) => migration.id < weekly.id), historical]),
+        current.filter((migration) => migration.id <= weekly.id).map((migration) => migration.id));
+      assert.deepEqual(await applyMigrations(client, current), ["0007_shopping-checklist"]);
+      assert.deepEqual(await applyMigrations(client, current), []);
+      const table = await client.execute("SELECT sql FROM sqlite_master WHERE name = 'planned_meals'");
+      assert.ok(String(table.rows[0]?.sql).includes(historicalCheck));
+      await client.execute("UPDATE schema_migrations SET hash = 'unknown' WHERE id = '0006_weekly-meal-plan'");
+      await assert.rejects(applyMigrations(client, current), /Migration history mismatch: 0006_weekly-meal-plan/);
     } else if (scenario === "edited" || scenario === "missing") {
       writeMigration(directory, "0001_first", ["CREATE TABLE first (value TEXT)"]);
       await applyMigrations(client, await loadMigrations(directory));

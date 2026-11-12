@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { Client, Row } from "@libsql/client";
+import { reconcileShoppingChecks } from "../shopping/checklist-repository";
 import { validateMealInput, type FoodSource, type MealInput, type MealErrors } from "./validation";
 
 export type MealLine = {
@@ -83,6 +84,7 @@ export async function saveMeal(client: Client, ownerId: string, input: MealInput
       sql: "INSERT INTO meal_ingredients (id, meal_id, position, amount, global_food_id, personal_food_id) VALUES (?, ?, ?, ?, ?, ?)",
       args: [line.lineId ?? `ingredient-${randomUUID()}`, mealId, position, line.amount, line.source === "global" ? line.foodId : null, line.source === "personal" ? line.foodId : null],
     });
+    await reconcileShoppingChecks(transaction, ownerId);
     await transaction.commit();
     return { ok: true, id: mealId };
   } catch (error) {

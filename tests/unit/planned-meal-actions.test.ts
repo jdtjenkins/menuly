@@ -8,6 +8,7 @@ vi.mock("../../lib/plan/server", () => ({
   searchCurrentPlanMeals: vi.fn(),
   updateCurrentPlannedMeal: mocks.update,
 }));
+vi.mock("../../lib/shopping/server", () => ({ setCurrentShoppingChecked: vi.fn() }));
 
 import { updatePlannedMealAction } from "../../app/meal-plan/actions";
 

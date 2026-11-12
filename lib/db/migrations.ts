@@ -15,6 +15,12 @@ export type MigrationLedger = "schema_migrations" | "development_seed_migrations
 
 const migrationName = /^\d{4}_[a-z0-9-]+$/;
 
+// The local weekly-plan migration was first applied with a stricter weekday
+// CHECK, then committed without that clause. Its schema is compatible with the
+// committed migration; recognize only that exact historical source hash.
+const weeklyPlanCommittedHash = "e138f5ca88425739ab65ae33dfca2d1047a046e3cbd8f77a36f6bd5df3ea93e2";
+const weeklyPlanHistoricalHash = "e8d136cb62b2cbb46ed21c89619e4d0e002bdb5d3397c68c5f4cc30d31af8dff";
+
 export async function loadMigrations(directory: string): Promise<Migration[]> {
   const names = await readdir(directory);
   const files = names.filter((name) => name.endsWith(".ts")).sort();
@@ -48,7 +54,8 @@ export async function loadMigrations(directory: string): Promise<Migration[]> {
 }
 
 function matchesMigrationHash(migration: Migration, recordedHash: unknown): boolean {
-  return recordedHash === migration.hash || recordedHash === migration.legacyLineEndingHash;
+  return recordedHash === migration.hash || recordedHash === migration.legacyLineEndingHash ||
+    (migration.id === "0006_weekly-meal-plan" && migration.hash === weeklyPlanCommittedHash && recordedHash === weeklyPlanHistoricalHash);
 }
 
 function checkMigrationSet(migrations: readonly Migration[]): void {

@@ -10,11 +10,11 @@ async function main() {
   const client = createDatabaseClient(parseDatabaseConfig({ DATABASE_URL: "file:./test.db" }, root));
   try {
     const migrations = await loadMigrations(join(process.cwd(), "migrations"));
-    const earlier = migrations.filter((migration) => migration.id !== "0006_weekly-meal-plan");
+    const earlier = migrations.filter((migration) => migration.id < "0006_weekly-meal-plan");
     assert.deepEqual(await applyMigrations(client, earlier), earlier.map((migration) => migration.id));
     await client.execute("INSERT INTO app_users (id) VALUES ('owner')");
     await client.execute("INSERT INTO meals (id, user_id, name, serving_yield) VALUES ('meal', 'owner', 'Dinner', 2)");
-    assert.deepEqual(await applyMigrations(client, migrations), ["0006_weekly-meal-plan"]);
+    assert.deepEqual(await applyMigrations(client, migrations), ["0006_weekly-meal-plan", "0007_shopping-checklist"]);
     assert.deepEqual(await applyMigrations(client, migrations), []);
     assert.equal((await client.execute("SELECT name FROM meals WHERE id = 'meal'")).rows[0]?.name, "Dinner");
     await client.execute("INSERT INTO planned_meals (id, user_id, meal_id, weekday, servings) VALUES ('card', 'owner', 'meal', 2, 0.5)");

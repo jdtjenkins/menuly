@@ -1,7 +1,7 @@
-import type { Client } from "@libsql/client";
+import type { Client, Transaction } from "@libsql/client";
 import { calculateShoppingList, type ShoppingContribution, type ShoppingItem } from "./calculation";
 
-export async function listShoppingItems(client: Client, ownerId: string): Promise<ShoppingItem[]> {
+export async function listShoppingItems(client: Client | Transaction, ownerId: string): Promise<ShoppingItem[]> {
   const result = await client.execute({
     sql: `SELECT i.global_food_id, i.personal_food_id, i.amount AS ingredient_amount,
       p.servings AS planned_servings, m.serving_yield,
@@ -11,7 +11,7 @@ export async function listShoppingItems(client: Client, ownerId: string): Promis
       JOIN meal_ingredients i ON i.meal_id = m.id
       LEFT JOIN global_foods g ON g.id = i.global_food_id
       LEFT JOIN personal_foods f ON f.id = i.personal_food_id AND f.user_id = p.user_id
-      WHERE p.user_id = ?`,
+      WHERE p.user_id = ? ORDER BY p.id, i.position, i.id`,
     args: [ownerId],
   });
   const contributions: ShoppingContribution[] = result.rows.map((row) => ({
