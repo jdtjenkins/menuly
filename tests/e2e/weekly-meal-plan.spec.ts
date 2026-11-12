@@ -12,6 +12,9 @@ test("day-column plan supports per-day search, duplicate meals, fixed days, frac
   await page.getByRole("link", { name: "Continue as Test User" }).click();
   await page.goto("/meal-plan");
 
+  const savedMeals = page.getByRole("complementary", { name: "Saved meals for planning" });
+  await expect(savedMeals).toContainText("No saved meals yet");
+  await expect(savedMeals.getByRole("link", { name: "Create a meal" })).toBeVisible();
   const region = page.getByRole("region", { name: "Weekly plan table" });
   const table = region.getByRole("table", { name: "Weekly meal plan" });
   await expect(table.getByRole("columnheader")).toHaveText(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]);
@@ -20,7 +23,7 @@ test("day-column plan supports per-day search, duplicate meals, fixed days, frac
   await expect(region).toHaveCSS("border-top-width", "0px");
   await expect(region).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
   await expect(table.getByRole("columnheader", { name: "Monday" })).toHaveCSS("border-bottom-width", "0px");
-  await expect(page.getByRole("link", { name: "Create a meal" })).toBeVisible();
+  await expect(savedMeals.getByRole("link", { name: "Create a meal" })).toBeVisible();
   await page.setViewportSize({ width: 1440, height: 900 });
   await expect(page.locator("#weekly-plan-scroll-hint")).toBeHidden();
   expect(await table.evaluate((element) => getComputedStyle(element).flexGrow)).toBe("1");
@@ -50,8 +53,23 @@ test("day-column plan supports per-day search, duplicate meals, fixed days, frac
     expect(desktopSize.regionScrollHeight - desktopSize.regionHeight).toBeLessThanOrEqual(2);
     expect(desktopSize.pageWidth).toBeLessThanOrEqual(width);
   }
+  await page.setViewportSize({ width: 1920, height: 900 });
+  const wideLayout = await page.evaluate(() => {
+    const source = document.querySelector('[aria-label="Saved meals for planning"]')!.getBoundingClientRect();
+    const board = document.querySelector('[aria-label="Weekly plan board"]')!.getBoundingClientRect();
+    return { sourceRight: source.right, boardLeft: board.left, pageWidth: document.documentElement.scrollWidth };
+  });
+  expect(wideLayout.sourceRight).toBeLessThanOrEqual(wideLayout.boardLeft);
+  expect(wideLayout.pageWidth).toBeLessThanOrEqual(1920);
   for (const width of [360, 375]) {
     await page.setViewportSize({ width, height: 812 });
+    await expect(savedMeals).toBeVisible();
+    const sourceAndBoard = await page.evaluate(() => {
+      const source = document.querySelector('[aria-label="Saved meals for planning"]')!.getBoundingClientRect();
+      const board = document.querySelector('[aria-label="Weekly plan board"]')!.getBoundingClientRect();
+      return { sourceBottom: source.bottom, boardTop: board.top };
+    });
+    expect(sourceAndBoard.sourceBottom).toBeLessThanOrEqual(sourceAndBoard.boardTop);
     await expect(page.locator("#weekly-plan-scroll-hint")).toBeVisible();
     const dimensions = await region.evaluate((element) => {
       const table = element.querySelector("table")!;
@@ -98,6 +116,9 @@ test("day-column plan supports per-day search, duplicate meals, fixed days, frac
   const cells = table.getByRole("cell");
   const monday = cells.nth(0);
   const wednesday = cells.nth(2);
+  const source = savedMeals.getByRole("list", { name: "Saved meals" }).getByRole("listitem").filter({ hasText: mealName });
+  await expect(source).toBeVisible();
+  await expect(source).toHaveAttribute("draggable", "true");
   const picker = wednesday.getByRole("combobox", { name: "Add meal to Wednesday" });
   await picker.fill(mealName);
   await expect(wednesday.getByRole("option", { name: `${mealName} (makes 4 servings)` })).toBeVisible();
@@ -106,6 +127,8 @@ test("day-column plan supports per-day search, duplicate meals, fixed days, frac
   await picker.press("ArrowDown");
   await picker.press("Enter");
   await expect(wednesday.getByRole("listitem")).toHaveCount(1);
+  await expect(page.getByRole("region", { name: "Shopping list" })).toContainText("Test food 01");
+  await expect(page.getByRole("button", { name: "Clear Week" })).toBeVisible();
   const pickerBox = await picker.boundingBox();
   const cardBox = await wednesday.getByRole("listitem").first().boundingBox();
   expect(pickerBox).not.toBeNull();

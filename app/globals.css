@@ -104,6 +104,7 @@
   .workspace-canvas,
   .workspace-inner,
   .weekly-plan-page,
+  .weekly-plan-planner,
   .weekly-plan-board,
   .weekly-plan-region {
     display: flex;
@@ -112,12 +113,24 @@
 
   .workspace-inner,
   .weekly-plan-page,
+  .weekly-plan-planner,
   .weekly-plan-board,
   .weekly-plan-region {
     flex: 1;
   }
 
   .weekly-plan-table { flex: 1; }
+}
+
+.weekly-plan-planner { min-width: 0; }
+
+@media (min-width: 1536px) {
+  .weekly-plan-planner {
+    display: grid;
+    grid-template-columns: 15rem minmax(0, 1fr);
+    align-items: stretch;
+    gap: 1.5rem;
+  }
 }
 
 @media (max-width: 639px) {
